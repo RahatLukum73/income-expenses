@@ -1,0 +1,62 @@
+import styled, { keyframes } from 'styled-components';
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const ButtonSpinner = styled.div`
+	border: 2px solid transparent;
+	border-top: 2px solid currentColor;
+	border-radius: 50%;
+	width: 16px;
+	height: 16px;
+	animation: ${spin} 1s linear infinite;
+	margin-right: 8px;
+`;
+
+const ButtonContent = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
+
+export const Button = styled.button`
+	background: ${props => (props.variant === 'secondary' ? 'transparent' : '#007bff')};
+	color: ${props => (props.variant === 'secondary' ? '#007bff' : 'white')};
+	border: ${props => (props.variant === 'secondary' ? '2px solid #007bff' : 'none')};
+	padding: 12px 24px;
+	border-radius: 8px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+	transition: all 0.2s ease;
+	width: ${props => (props.$fullWidth ? '100%' : 'auto')};
+	opacity: ${props => (props.disabled ? 0.6 : 1)};
+
+	&:hover {
+		background: ${props => {
+			if (props.disabled) return props.variant === 'secondary' ? 'transparent' : '#6c757d';
+			return props.variant === 'secondary' ? '#007bff' : '#0056b3';
+		}};
+		color: ${props => {
+			if (props.disabled) return props.variant === 'secondary' ? '#007bff' : 'white';
+			return props.variant === 'secondary' ? 'white' : 'white';
+		}};
+		transform: ${props => (props.disabled ? 'none' : 'translateY(-1px)')};
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+`;
+
+// Компонент кнопки с поддержкой loading состояния
+export const LoadingButton = ({ children, loading, ...props }) => (
+	<Button {...props} disabled={props.disabled || loading}>
+		<ButtonContent>
+			{loading && <ButtonSpinner />}
+			{children}
+		</ButtonContent>
+	</Button>
+);
