@@ -5,9 +5,10 @@ import styled from 'styled-components';
 import { fetchSummary } from '../store/actions/summaryActions';
 import { fetchCategories } from '../store/actions/categoryActions';
 import { fetchAccounts } from '../store/actions/accountActions';
-import { fetchTransactions } from '../store/actions/transactionActions';
+import { useTransactions } from '../hooks/useTransactions'; // [ИЗМЕНЕНИЕ] Новый хук
 import { Button } from '../components/UI/Button/Button';
 import { Spinner } from '../components/UI/Spinner/Spinner';
+import Pagination from '../components/UI/Pagination/Pagination'; // [ИЗМЕНЕНИЕ] Добавляем
 import TransactionFilters from '../components/Layout/TransactionFilters';
 import PieChart from '../components/Charts/PieChart';
 import {
@@ -281,175 +282,108 @@ const Dashboard = () => {
 		loading: accountsLoading,
 		error: accountsError,
 	} = useSelector(state => state.accounts);
+
+	// Используем хук useTransactions
 	const {
 		transactions,
 		loading: transactionsLoading,
 		error: transactionsError,
-	} = useSelector(state => state.transactions);
+		pagination,
+		filters: transactionFilters,
+		stats,
+		updateFilters,
+		changePage,
+	} = useTransactions();
 
-	const [activeTab, setActiveTab] = useState('expense');
-	const [activePeriod, setActivePeriod] = useState('month');
-	const [filters, setFilters] = useState({
-		search: '',
-		categories: [],
-		accounts: [],
-	});
+	// [ИЗМЕНЯЕМ] Используем значения из filters вместо локального состояния
+	const activeTab = transactionFilters?.type || 'expense';
+	const activePeriod = transactionFilters?.period || 'month';
 
 	// Загружаем данные при монтировании
 	useEffect(() => {
 		dispatch(fetchSummary());
 		dispatch(fetchCategories());
 		dispatch(fetchAccounts());
-		loadTransactionsForPeriod(activePeriod);
 	}, [dispatch]);
 
-	// Загружаем транзакции для выбранного периода
-	const loadTransactionsForPeriod = period => {
-		const { startDate, endDate } = getPeriodDates(period);
-		dispatch(
-			fetchTransactions({
-				startDate,
-				endDate,
-				type: activeTab,
-			})
-		);
-	};
-
-	// Обработчик изменения периода
+	// [ИЗМЕНЯЕМ] Обработчик изменения периода
 	const handlePeriodChange = period => {
-		setActivePeriod(period);
-		// Сбрасываем только поисковые фильтры, но сохраняем тип (activeTab остается)
-		setFilters({
-			search: '',
-			categories: [],
-			accounts: [],
+		updateFilters({
+			...transactionFilters,
+			period,
 		});
-		loadTransactionsForPeriod(period);
 	};
 
-	// Функция фильтрации транзакций с мемоизацией
-	const filterTransactions = useCallback((transactions, filters) => {
-		return transactions.filter(transaction => {
-			if (!transaction) return false;
-
-			// Фильтр по поиску
-			if (filters.search) {
-				const searchLower = filters.search.toLowerCase();
-				const description = transaction.description || '';
-				if (!description.toLowerCase().includes(searchLower)) {
-					return false;
-				}
-			}
-
-			// Фильтр по категориям
-			if (filters.categories.length > 0) {
-				const categoryId = transaction.category?._id;
-				if (!categoryId || !filters.categories.includes(categoryId)) {
-					return false;
-				}
-			}
-
-			// Фильтр по счетам
-			if (filters.accounts.length > 0) {
-				const accountId = transaction.account?._id;
-				if (!accountId || !filters.accounts.includes(accountId)) {
-					return false;
-				}
-			}
-
-			return true;
+	// [ИЗМЕНЯЕМ] Обработчик изменения вкладки
+	const handleTabChange = tab => {
+		updateFilters({
+			...transactionFilters,
+			type: tab,
 		});
-	}, []);
+	};
+
+	// Обработчик изменения фильтров
+	const handleFiltersChange = newFilters => {
+		updateFilters({
+			...transactionFilters,
+			...newFilters,
+		});
+	};
+
+	// Обработчик изменения страницы
+	const handlePageChange = page => {
+		changePage(page);
+	};
 
 	// Получаем символ валюты
 	const currencySymbol = getCurrencySymbol(user?.currency || 'RUB');
 
-	// Используем уже нормализованные транзакции из store
+	// Используем transactions из хука
 	const transactionsArray = Array.isArray(transactions) ? transactions : [];
 
-	// Сначала фильтруем по периоду
-	const periodFilteredTransactions = useMemo(() => {
-		const { startDate, endDate } = getPeriodDates(activePeriod);
-		const start = new Date(startDate);
-		const end = new Date(endDate);
-		end.setHours(23, 59, 59, 999);
+	const totalIncome = stats?.totalIncome || 0;
+	const totalExpenses = stats?.totalExpenses || 0;
 
-		return transactionsArray.filter(transaction => {
-			if (!transaction) return false;
-			const transactionDate = new Date(transaction.date);
-			return transactionDate >= start && transactionDate <= end;
-		});
-	}, [transactionsArray, activePeriod]);
+	// [ИСПРАВЛЕНО] Диаграмма - используем функцию calculateChartData
+	const chartData = useMemo(() => {
+		// Если есть stats из API - используем их
+		if (stats?.categoryStats && stats.categoryStats.length > 0) {
+			const totalAmount = activeTab === 'income' ? stats.totalIncome : stats.totalExpenses;
 
-	// Затем применяем пользовательские фильтры
-	const filteredTransactions = useMemo(() => {
-		let result = periodFilteredTransactions;
+			return stats.categoryStats
+				.filter(item => {
+					// Фильтруем по типу (income/expense)
+					const category = categories.find(cat => cat._id === item.categoryId);
+					return category?.type === activeTab;
+				})
+				.map(item => {
+					const percentage = totalAmount > 0 ? ((item.amount / totalAmount) * 100).toFixed(1) : 0;
 
-		// Фильтруем по активной вкладке (доходы/расходы)
-		result = result.filter(transaction => transaction.type === activeTab);
-
-		// Применяем пользовательские фильтры только если они не пустые
-		const hasUserFilters =
-			filters.search || filters.categories.length > 0 || filters.accounts.length > 0;
-
-		if (hasUserFilters) {
-			result = filterTransactions(result, filters);
+					return {
+						...item,
+						percentage: parseFloat(percentage),
+					};
+				})
+				.sort((a, b) => b.amount - a.amount);
 		}
 
-		return result;
-	}, [periodFilteredTransactions, filters, activeTab, filterTransactions]);
-
-	// РАСЧЕТ СТАТИСТИКИ на основе отфильтрованных транзакций
-	const totalIncome = useMemo(
-		() =>
-			filteredTransactions
-				.filter(t => t.type === 'income')
-				.reduce((sum, t) => sum + (t.amount || 0), 0),
-		[filteredTransactions]
-	);
-
-	const totalExpenses = useMemo(
-		() =>
-			filteredTransactions
-				.filter(t => t.type === 'expense')
-				.reduce((sum, t) => sum + (t.amount || 0), 0),
-		[filteredTransactions]
-	);
-
-	// Рассчитываем данные для диаграммы
-	const chartData = useMemo(
-		() => calculateChartData(filteredTransactions, categories),
-		[filteredTransactions, categories]
-	);
-
+		// Fallback: используем старую логику если stats нет
+		return calculateChartData(transactionsArray, categories);
+	}, [stats, activeTab, categories, transactionsArray]);
 	// Группируем транзакции по датам
 	const groupedTransactions = useMemo(
-		() => groupTransactionsByDate(filteredTransactions),
-		[filteredTransactions]
+		() => groupTransactionsByDate(transactionsArray),
+		[transactionsArray]
 	);
 
-	const loading = summaryLoading || categoriesLoading || transactionsLoading || accountsLoading;
-	const error = summaryError || categoriesError || transactionsError || accountsError;
+	const loading = summaryLoading || categoriesLoading || accountsLoading || transactionsLoading;
+	const error = summaryError || categoriesError || accountsError || transactionsError;
 
 	// Обработчик клика по транзакции
 	const handleTransactionClick = transactionId => {
 		if (transactionId) {
 			navigate(`/transaction/${transactionId}`);
 		}
-	};
-
-	// Обработчик изменения фильтров
-	const handleFiltersChange = newFilters => {
-		setFilters(newFilters);
-	};
-
-	// Обработчик сброса фильтров
-	const handleResetFilters = () => {
-		setFilters({
-			search: '',
-			categories: [],
-			accounts: [],
-		});
 	};
 
 	// Периоды для фильтрации
@@ -460,7 +394,7 @@ const Dashboard = () => {
 		{ id: 'year', label: 'Год' },
 	];
 
-	if (loading && filteredTransactions.length === 0) {
+	if (loading && transactionsArray.length === 0) {
 		return (
 			<DashboardContainer>
 				<Spinner />
@@ -499,10 +433,10 @@ const Dashboard = () => {
 
 			{/* Переключатель расходы/доходы */}
 			<ToggleContainer>
-				<ToggleButton $active={activeTab === 'expense'} onClick={() => setActiveTab('expense')}>
+				<ToggleButton $active={activeTab === 'expense'} onClick={() => handleTabChange('expense')}>
 					РАСХОДЫ
 				</ToggleButton>
-				<ToggleButton $active={activeTab === 'income'} onClick={() => setActiveTab('income')}>
+				<ToggleButton $active={activeTab === 'income'} onClick={() => handleTabChange('income')}>
 					ДОХОДЫ
 				</ToggleButton>
 			</ToggleContainer>
@@ -523,15 +457,15 @@ const Dashboard = () => {
 
 			{/* Фильтры транзакций */}
 			<TransactionFilters
-				filters={filters}
+				filters={transactionFilters || {}}
 				onFiltersChange={handleFiltersChange}
 				categories={categories.filter(cat => cat.type === activeTab)}
 				accounts={accounts}
-				transactionsCount={filteredTransactions.length}
+				transactionsCount={transactionsArray.length}
 			/>
 
-			{/* Круговая диаграмма */}
-			{chartData.length > 0 && (
+			{/* Круговая диаграмма - [ИСПРАВЛЕНО] проверяем chartData */}
+			{chartData && chartData.length > 0 && (
 				<ChartsContainer>
 					<PieChart
 						data={chartData}
@@ -546,46 +480,62 @@ const Dashboard = () => {
 			<TransactionsSection>
 				<SectionTitle>
 					{activeTab === 'income' ? 'Последние доходы' : 'Последние расходы'}
-					{filteredTransactions.length > 0 && ` (${filteredTransactions.length})`}
+					{transactionsArray.length > 0 && ` (${pagination?.total || 0} всего)`}
 				</SectionTitle>
 
 				{Object.keys(groupedTransactions).length > 0 ? (
-					Object.entries(groupedTransactions).map(([dateGroup, transactionsInGroup]) => (
-						<DateGroup key={dateGroup}>
-							<DateHeader>{dateGroup}</DateHeader>
-							<TransactionList>
-								{transactionsInGroup.map(transaction => {
-									if (!transaction) return null;
+					<>
+						{Object.entries(groupedTransactions).map(([dateGroup, transactionsInGroup]) => (
+							<DateGroup key={dateGroup}>
+								<DateHeader>{dateGroup}</DateHeader>
+								<TransactionList>
+									{transactionsInGroup.map(transaction => {
+										if (!transaction) return null;
 
-									const category = transaction.category;
-									const amount = transaction.amount || 0;
-									const categoryName = category?.name || 'Неизвестная категория';
-									const categoryColor = category?.color || '#007bff';
-									const transactionId = transaction._id || transaction.id;
+										const category = transaction.category;
+										const amount = transaction.amount || 0;
+										const categoryName = category?.name || 'Неизвестная категория';
+										const categoryColor = category?.color || '#007bff';
+										const transactionId = transaction._id || transaction.id;
 
-									return (
-										<TransactionItem
-											key={transactionId}
-											onClick={() => handleTransactionClick(transactionId)}
-										>
-											<TransactionInfo>
-												<CategoryColor color={categoryColor} />
-												<CategoryName>{categoryName}</CategoryName>
-												<TransactionTime>{formatTime(transaction.date)}</TransactionTime>
-											</TransactionInfo>
-											<TransactionAmount type={transaction.type}>
-												{transaction.type === 'income' ? '+' : '-'}
-												{amount.toLocaleString('ru-RU')} {currencySymbol}
-											</TransactionAmount>
-										</TransactionItem>
-									);
-								})}
-							</TransactionList>
-						</DateGroup>
-					))
+										return (
+											<TransactionItem
+												key={transactionId}
+												onClick={() => handleTransactionClick(transactionId)}
+											>
+												<TransactionInfo>
+													<CategoryColor color={categoryColor} />
+													<CategoryName>{categoryName}</CategoryName>
+													<TransactionTime>{formatTime(transaction.date)}</TransactionTime>
+												</TransactionInfo>
+												<TransactionAmount type={transaction.type}>
+													{transaction.type === 'income' ? '+' : '-'}
+													{amount.toLocaleString('ru-RU')} {currencySymbol}
+												</TransactionAmount>
+											</TransactionItem>
+										);
+									})}
+								</TransactionList>
+							</DateGroup>
+						))}
+
+						{/* Добавляем пагинацию */}
+						{pagination && pagination.pages > 1 && (
+							<Pagination
+								currentPage={pagination.page || 1}
+								totalPages={pagination.pages || 1}
+								totalCount={pagination.total || 0}
+								limit={pagination.limit || 10}
+								onPageChange={handlePageChange}
+								showPageSize={false}
+							/>
+						)}
+					</>
 				) : (
 					<NoDataMessage>
-						{filters.search || filters.categories.length > 0 || filters.accounts.length > 0
+						{transactionFilters?.search ||
+						transactionFilters?.categories?.length > 0 ||
+						transactionFilters?.accounts?.length > 0
 							? 'По заданным фильтрам транзакций не найдено'
 							: activeTab === 'expense'
 								? `За ${periods.find(p => p.id === activePeriod)?.label?.toLowerCase()} расходов не было`
@@ -598,5 +548,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-//Hello

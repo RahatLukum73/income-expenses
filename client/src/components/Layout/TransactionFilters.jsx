@@ -1,10 +1,38 @@
-import { useState, useEffect } from 'react';
+// src/components/Layout/TransactionFilters.jsx - ПОЛНАЯ ВЕРСИЯ С DEBOUNCE
+import { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { Input } from '../UI/Input/Input';
 import MultiSelect from '../UI/MultiSelect/MultiSelect';
 import Chip from '../UI/Chip/Chip';
 import { Button } from '../UI/Button/Button';
 
+// [ДОБАВЛЯЕМ] Кастомный хук useDebounce
+const useDebounce = (callback, delay) => {
+  const timeoutRef = useRef(null);
+
+  const debouncedCallback = useCallback((...args) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  }, [callback, delay]);
+
+  // Очистка при размонтировании
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  return debouncedCallback;
+};
+
+// Styled components (без изменений)
 const FiltersContainer = styled.div`
 	background: white;
 	border-radius: 12px;
@@ -91,31 +119,93 @@ const TransactionFilters = ({
 	accounts = [],
 	transactionsCount = 0,
 }) => {
-	const [localFilters, setLocalFilters] = useState(filters);
+	// Локальное состояние для немедленного отображения
+	const [localSearch, setLocalSearch] = useState(filters.search || '');
+	const [localCategories, setLocalCategories] = useState(filters.categories || []);
+	const [localAccounts, setLocalAccounts] = useState(filters.accounts || []);
 
 	// Синхронизация с внешним состоянием
 	useEffect(() => {
-		setLocalFilters(filters);
+		setLocalSearch(filters.search || '');
+		setLocalCategories(filters.categories || []);
+		setLocalAccounts(filters.accounts || []);
 	}, [filters]);
 
-	const handleFilterChange = (key, value) => {
-		const newFilters = { ...localFilters, [key]: value };
-		setLocalFilters(newFilters);
-		onFiltersChange(newFilters);
+	// [ДОБАВЛЯЕМ] Debounce функция для поиска
+	const debouncedSearchUpdate = useDebounce((searchValue) => {
+		onFiltersChange({
+			...filters,
+			search: searchValue,
+		});
+	}, 500); // 500ms задержка
+
+	// Обработчики с немедленным обновлением локального состояния
+	const handleSearchChange = (e) => {
+		const value = e.target.value;
+		setLocalSearch(value);
+		debouncedSearchUpdate(value);
+	};
+
+	const handleCategoriesChange = (values) => {
+		setLocalCategories(values);
+		onFiltersChange({
+			...filters,
+			categories: values,
+		});
+	};
+
+	const handleAccountsChange = (values) => {
+		setLocalAccounts(values);
+		onFiltersChange({
+			...filters,
+			accounts: values,
+		});
 	};
 
 	const handleReset = () => {
+		setLocalSearch('');
+		setLocalCategories([]);
+		setLocalAccounts([]);
+		
 		const resetFilters = {
+			...filters,
 			search: '',
 			categories: [],
 			accounts: [],
 		};
-		setLocalFilters(resetFilters);
+		
 		if (onReset) {
 			onReset();
 		} else {
 			onFiltersChange(resetFilters);
 		}
+	};
+
+	// Удаление отдельных фильтров
+	const handleRemoveCategory = (categoryId) => {
+		const newCategories = localCategories.filter(id => id !== categoryId);
+		setLocalCategories(newCategories);
+		onFiltersChange({
+			...filters,
+			categories: newCategories,
+		});
+	};
+
+	const handleRemoveAccount = (accountId) => {
+		const newAccounts = localAccounts.filter(id => id !== accountId);
+		setLocalAccounts(newAccounts);
+		onFiltersChange({
+			...filters,
+			accounts: newAccounts,
+		});
+	};
+
+	const handleClearSearch = () => {
+		setLocalSearch('');
+		onFiltersChange({
+			...filters,
+			search: '',
+		});
 	};
 
 	// Получение названия категории по ID
@@ -132,9 +222,9 @@ const TransactionFilters = ({
 
 	// Подсчет активных фильтров
 	const activeFiltersCount = [
-		localFilters.search ? 1 : 0,
-		localFilters.categories.length,
-		localFilters.accounts.length,
+		localSearch ? 1 : 0,
+		localCategories.length,
+		localAccounts.length,
 	].reduce((a, b) => a + b, 0);
 
 	// Рендер опции категории
@@ -158,8 +248,8 @@ const TransactionFilters = ({
 					<Input
 						type="text"
 						placeholder="Введите текст..."
-						value={localFilters.search}
-						onChange={e => handleFilterChange('search', e.target.value)}
+						value={localSearch}
+						onChange={handleSearchChange}
 					/>
 				</FilterGroup>
 
@@ -167,8 +257,8 @@ const TransactionFilters = ({
 					<FilterLabel>Категории</FilterLabel>
 					<MultiSelect
 						options={categories}
-						selectedValues={localFilters.categories}
-						onChange={values => handleFilterChange('categories', values)}
+						selectedValues={localCategories}
+						onChange={handleCategoriesChange}
 						placeholder="Выберите категории"
 						renderOption={renderCategoryOption}
 						getOptionLabel={cat => cat.name}
@@ -180,8 +270,8 @@ const TransactionFilters = ({
 					<FilterLabel>Счета</FilterLabel>
 					<MultiSelect
 						options={accounts}
-						selectedValues={localFilters.accounts}
-						onChange={values => handleFilterChange('accounts', values)}
+						selectedValues={localAccounts}
+						onChange={handleAccountsChange}
 						placeholder="Выберите счета"
 						getOptionLabel={acc => acc.name}
 						getOptionValue={acc => acc._id}
@@ -191,43 +281,37 @@ const TransactionFilters = ({
 
 			{activeFiltersCount > 0 && (
 				<SelectedFilters>
-					{localFilters.search && (
+					{localSearch && (
 						<Chip
-							label={`Поиск: "${localFilters.search}"`}
-							onRemove={() => handleFilterChange('search', '')}
+							label={`Поиск: "${localSearch}"`}
+							onRemove={handleClearSearch}
 						/>
 					)}
 
-					{localFilters.categories.map(categoryId => (
+					{localCategories.map(categoryId => (
 						<Chip
 							key={categoryId}
 							label={`Категория: ${getCategoryName(categoryId)}`}
-							onRemove={() =>
-								handleFilterChange(
-									'categories',
-									localFilters.categories.filter(id => id !== categoryId)
-								)
-							}
+							onRemove={() => handleRemoveCategory(categoryId)}
 						/>
 					))}
 
-					{localFilters.accounts.map(accountId => (
+					{localAccounts.map(accountId => (
 						<Chip
 							key={accountId}
 							label={`Счет: ${getAccountName(accountId)}`}
-							onRemove={() =>
-								handleFilterChange(
-									'accounts',
-									localFilters.accounts.filter(id => id !== accountId)
-								)
-							}
+							onRemove={() => handleRemoveAccount(accountId)}
 						/>
 					))}
 				</SelectedFilters>
 			)}
 
 			<ActionButtons>
-				<Button $variant="secondary" onClick={handleReset} disabled={activeFiltersCount === 0}>
+				<Button 
+					$variant="secondary" 
+					onClick={handleReset} 
+					disabled={activeFiltersCount === 0}
+				>
 					Сбросить фильтры
 				</Button>
 			</ActionButtons>

@@ -3,14 +3,12 @@ const Transaction = require('../models/Transaction');
 const Account = require('../models/Account');
 const Category = require('../models/Category');
 
-// controllers/transactionController.js
 const getAllTransactions = async (req, res) => {
 	try {
 		const page = parseInt(req.query.page) || 1;
-		const limit = parseInt(req.query.limit) || 10; // Меньше по умолчанию
+		const limit = parseInt(req.query.limit) || 10;
 		const skip = (page - 1) * limit;
 
-		// ПРОСТОЙ запрос - только по userId
 		const query = { userId: req.user._id };
 
 		// Фильтр по типу (income/expense)
@@ -26,14 +24,29 @@ const getAllTransactions = async (req, res) => {
 			};
 		}
 
-		// Фильтр по категории
-		if (req.query.categoryId) {
-			query.categoryId = req.query.categoryId;
+		// [ИЗМЕНЕНИЕ] Фильтр по поиску в описании
+		if (req.query.search) {
+			query.description = { $regex: req.query.search, $options: 'i' };
 		}
 
-		// Фильтр по счету
-		if (req.query.accountId) {
-			query.accountId = req.query.accountId;
+		// [ИЗМЕНЕНИЕ] Фильтр по категориям (поддержка multiple)
+		if (req.query.category) {
+			const categories = req.query.category.split(',');
+			if (categories.length === 1) {
+				query.categoryId = categories[0];
+			} else {
+				query.categoryId = { $in: categories };
+			}
+		}
+
+		// [ИЗМЕНЕНИЕ] Фильтр по счетам (поддержка multiple)
+		if (req.query.account) {
+			const accounts = req.query.account.split(',');
+			if (accounts.length === 1) {
+				query.accountId = accounts[0];
+			} else {
+				query.accountId = { $in: accounts };
+			}
 		}
 
 		const transactions = await Transaction.find(query)
@@ -45,6 +58,45 @@ const getAllTransactions = async (req, res) => {
 
 		const total = await Transaction.countDocuments(query);
 
+		// [ИЗМЕНЕНИЕ] Добавляем агрегацию для статистики
+		const incomeStats = await Transaction.aggregate([
+			{ $match: { ...query, type: 'income' } },
+			{ $group: { _id: null, total: { $sum: '$amount' } } },
+		]);
+
+		const expenseStats = await Transaction.aggregate([
+			{ $match: { ...query, type: 'expense' } },
+			{ $group: { _id: null, total: { $sum: '$amount' } } },
+		]);
+
+		// [ИЗМЕНЕНИЕ] Для диаграммы - группировка по категориям
+		const categoryStats = await Transaction.aggregate([
+			{ $match: query },
+			{
+				$group: {
+					_id: '$categoryId',
+					total: { $sum: '$amount' },
+					count: { $sum: 1 },
+				},
+			},
+			{ $sort: { total: -1 } },
+		]);
+
+		// Получаем информацию о категориях для диаграммы
+		const categoriesWithStats = await Promise.all(
+			categoryStats.map(async stat => {
+				const category = await Category.findById(stat._id);
+				return {
+					categoryId: stat._id,
+					categoryName: category ? category.name : 'Неизвестная категория',
+					amount: stat.total,
+					count: stat.count,
+					color: category ? category.color : '#6c757d',
+					icon: category ? category.icon : 'other',
+				};
+			}),
+		);
+
 		res.json({
 			error: null,
 			transactions,
@@ -53,6 +105,12 @@ const getAllTransactions = async (req, res) => {
 				limit,
 				total,
 				pages: Math.ceil(total / limit),
+			},
+			// [ИЗМЕНЕНИЕ] Добавляем статистику в ответ
+			stats: {
+				totalIncome: incomeStats[0]?.total || 0,
+				totalExpenses: expenseStats[0]?.total || 0,
+				categoryStats: categoriesWithStats,
 			},
 		});
 	} catch (error) {
@@ -83,22 +141,29 @@ const getTransactionById = async (req, res) => {
 // Создать новую транзакцию
 const createTransaction = async (req, res) => {
 	try {
+console.log('=== CREATE TRANSACTION START ===');
+    console.log('Request body:', req.body);
+    console.log('User ID:', req.user._id);
 		const { amount, type, date, description, accountId, categoryId } = req.body;
 
 		// Проверяем существование счета и принадлежность пользователю
 		const account = await Account.findOne({ _id: accountId, userId: req.user._id });
+		console.log('🏦 Found account:', account);
 		if (!account) {
+			console.log('❌ Account not found or not owned by user');
 			return res.status(404).json({ error: 'Счет не найден' });
 		}
 
 		// Проверяем существование категории
 		const category = await Category.findById(categoryId);
 		if (!category) {
+			console.log('❌ Category not found');
 			return res.status(404).json({ error: 'Категория не найдена' });
 		}
 
 		// Проверяем соответствие типа категории и транзакции
 		if (category.type !== type) {
+			console.log('❌ Category type mismatch:', category.type, '!=', type);
 			return res.status(400).json({ error: 'Тип категории не соответствует типу транзакции' });
 		}
 
@@ -118,9 +183,11 @@ const createTransaction = async (req, res) => {
 		const populatedTransaction = await Transaction.findById(transaction._id)
 			.populate('accountId', 'name currency')
 			.populate('categoryId', 'name type color icon');
-
+console.log('✅ Final populated transaction:', populatedTransaction);
+    console.log('=== CREATE TRANSACTION END ===');
 		res.status(201).json({ error: null, transaction: populatedTransaction });
 	} catch (error) {
+		console.error('❌ Error in createTransaction:', error);
 		res.status(400).json({ error: error.message });
 	}
 };
