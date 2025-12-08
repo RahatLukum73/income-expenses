@@ -1,4 +1,4 @@
-// utils/dateHelpers.js - ДОБАВЛЯЕМ НОВЫЕ ФУНКЦИИ
+// // utils/dateHelpers.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 export const formatDate = date => {
 	return new Date(date).toLocaleDateString('ru-RU', {
 		day: 'numeric',
@@ -53,31 +53,51 @@ export const groupTransactionsByDate = transactions => {
 	return groups;
 };
 
-// Функция для получения дат периода
+// [ИЗМЕНЕНИЕ] Функция для получения дат периода - ИСПРАВЛЕНА!
 export const getPeriodDates = period => {
 	const now = new Date();
 	const startDate = new Date();
+	const endDate = new Date();
 
 	switch (period) {
 		case 'day':
 			startDate.setHours(0, 0, 0, 0);
+			endDate.setHours(23, 59, 59, 999);
 			break;
 		case 'week':
 			startDate.setDate(now.getDate() - 7);
+			startDate.setHours(0, 0, 0, 0);
+			endDate.setHours(23, 59, 59, 999);
 			break;
 		case 'month':
 			startDate.setMonth(now.getMonth() - 1);
+			startDate.setHours(0, 0, 0, 0);
+			endDate.setHours(23, 59, 59, 999);
 			break;
 		case 'year':
 			startDate.setFullYear(now.getFullYear() - 1);
+			startDate.setHours(0, 0, 0, 0);
+			endDate.setHours(23, 59, 59, 999);
 			break;
 		default:
 			startDate.setMonth(now.getMonth() - 1);
+			startDate.setHours(0, 0, 0, 0);
+			endDate.setHours(23, 59, 59, 999);
 	}
 
+	// [ИЗМЕНЕНИЕ] Возвращаем ISO строки с полным временем
 	return {
-		startDate: startDate.toISOString().split('T')[0],
-		endDate: now.toISOString().split('T')[0],
+		startDate: startDate.toISOString(), // Пример: '2025-11-07T00:00:00.000Z'
+		endDate: endDate.toISOString(),     // Пример: '2025-12-07T23:59:59.999Z'
+	};
+};
+
+// [ИЗМЕНЕНИЕ] Добавляем вспомогательную функцию для старых компонентов
+export const getPeriodDatesShort = period => {
+	const dates = getPeriodDates(period);
+	return {
+		startDate: dates.startDate.split('T')[0], // Только дата
+		endDate: dates.endDate.split('T')[0],     // Только дата
 	};
 };
 

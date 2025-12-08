@@ -44,7 +44,7 @@ export const useTransactions = () => {
 			dispatch(
 				fetchTransactions({
 					page,
-					limit: 10,
+					limit: 20,
 					filters: {
 						...activeFilters,
 						startDate,
@@ -85,7 +85,7 @@ export const useTransactions = () => {
 		dispatch(
 			fetchTransactions({
 				page: urlPage,
-				limit: 10,
+				limit: 20,
 				filters: initialFilters,
 			})
 		);

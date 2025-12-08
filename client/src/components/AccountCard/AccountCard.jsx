@@ -230,7 +230,10 @@ const AccountCard = ({ account, onEdit, onDelete, onViewTransactions, formatCurr
 				</ActionButton>
 				<DeleteButton
 					$variant="secondary"
-					onClick={() => onDelete(_id, hasTransactions)}
+					onClick={e => {
+						e.stopPropagation();
+						onDelete(_id, hasTransactions);
+					}}
 					disabled={hasTransactions}
 					title={hasTransactions ? 'Нельзя удалить счет с транзакциями' : 'Удалить счет'}
 				>

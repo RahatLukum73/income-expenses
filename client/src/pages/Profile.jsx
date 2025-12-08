@@ -257,7 +257,7 @@ const Profile = () => {
 							>
 								Сохранить
 							</LoadingButton>
-							<Button variant="secondary" onClick={handleCancelEdit} disabled={loading}>
+							<Button $variant="secondary" onClick={handleCancelEdit} disabled={loading}>
 								Отмена
 							</Button>
 						</FieldRow>

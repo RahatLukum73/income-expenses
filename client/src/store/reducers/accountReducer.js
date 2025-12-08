@@ -61,7 +61,7 @@ export const accountReducer = (state = initialState, action) => {
 			return {
 				...state,
 				loading: false,
-				accounts: state.accounts.filter(account => account._id !== action.payload),
+				accounts: state.accounts.filter(account => account._id !== action.payload && account.id !== action.payload),
 				error: null,
 			};
 

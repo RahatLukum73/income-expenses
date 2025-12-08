@@ -343,7 +343,6 @@ const Dashboard = () => {
 
 	const totalIncome = stats?.totalIncome || 0;
 	const totalExpenses = stats?.totalExpenses || 0;
-
 	// [ИСПРАВЛЕНО] Диаграмма - используем функцию calculateChartData
 	const chartData = useMemo(() => {
 		// Если есть stats из API - используем их

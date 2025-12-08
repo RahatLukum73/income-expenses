@@ -22,9 +22,9 @@ const ButtonContent = styled.div`
 `;
 
 export const Button = styled.button`
-	background: ${props => (props.variant === 'secondary' ? 'transparent' : '#007bff')};
-	color: ${props => (props.variant === 'secondary' ? '#007bff' : 'white')};
-	border: ${props => (props.variant === 'secondary' ? '2px solid #007bff' : 'none')};
+	background: ${props => (props.$variant === 'secondary' ? 'transparent' : '#007bff')};
+	color: ${props => (props.$variant === 'secondary' ? '#007bff' : 'white')};
+	border: ${props => (props.$variant === 'secondary' ? '2px solid #007bff' : 'none')};
 	padding: 12px 24px;
 	border-radius: 8px;
 	font-size: 16px;

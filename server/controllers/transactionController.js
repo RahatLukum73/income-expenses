@@ -6,7 +6,7 @@ const Category = require('../models/Category');
 const getAllTransactions = async (req, res) => {
 	try {
 		const page = parseInt(req.query.page) || 1;
-		const limit = parseInt(req.query.limit) || 10;
+		const limit = parseInt(req.query.limit) || 50;
 		const skip = (page - 1) * limit;
 
 		const query = { userId: req.user._id };
@@ -24,12 +24,12 @@ const getAllTransactions = async (req, res) => {
 			};
 		}
 
-		// [ИЗМЕНЕНИЕ] Фильтр по поиску в описании
+		//Фильтр по поиску в описании
 		if (req.query.search) {
 			query.description = { $regex: req.query.search, $options: 'i' };
 		}
 
-		// [ИЗМЕНЕНИЕ] Фильтр по категориям (поддержка multiple)
+		// Фильтр по категориям (поддержка multiple)
 		if (req.query.category) {
 			const categories = req.query.category.split(',');
 			if (categories.length === 1) {
@@ -39,7 +39,7 @@ const getAllTransactions = async (req, res) => {
 			}
 		}
 
-		// [ИЗМЕНЕНИЕ] Фильтр по счетам (поддержка multiple)
+		// Фильтр по счетам (поддержка multiple)
 		if (req.query.account) {
 			const accounts = req.query.account.split(',');
 			if (accounts.length === 1) {
@@ -58,7 +58,7 @@ const getAllTransactions = async (req, res) => {
 
 		const total = await Transaction.countDocuments(query);
 
-		// [ИЗМЕНЕНИЕ] Добавляем агрегацию для статистики
+		// Добавляем агрегацию для статистики
 		const incomeStats = await Transaction.aggregate([
 			{ $match: { ...query, type: 'income' } },
 			{ $group: { _id: null, total: { $sum: '$amount' } } },
@@ -69,7 +69,7 @@ const getAllTransactions = async (req, res) => {
 			{ $group: { _id: null, total: { $sum: '$amount' } } },
 		]);
 
-		// [ИЗМЕНЕНИЕ] Для диаграммы - группировка по категориям
+		//Для диаграммы - группировка по категориям
 		const categoryStats = await Transaction.aggregate([
 			{ $match: query },
 			{
@@ -106,7 +106,7 @@ const getAllTransactions = async (req, res) => {
 				total,
 				pages: Math.ceil(total / limit),
 			},
-			// [ИЗМЕНЕНИЕ] Добавляем статистику в ответ
+			// Добавляем статистику в ответ
 			stats: {
 				totalIncome: incomeStats[0]?.total || 0,
 				totalExpenses: expenseStats[0]?.total || 0,
@@ -141,29 +141,22 @@ const getTransactionById = async (req, res) => {
 // Создать новую транзакцию
 const createTransaction = async (req, res) => {
 	try {
-console.log('=== CREATE TRANSACTION START ===');
-    console.log('Request body:', req.body);
-    console.log('User ID:', req.user._id);
 		const { amount, type, date, description, accountId, categoryId } = req.body;
 
 		// Проверяем существование счета и принадлежность пользователю
 		const account = await Account.findOne({ _id: accountId, userId: req.user._id });
-		console.log('🏦 Found account:', account);
 		if (!account) {
-			console.log('❌ Account not found or not owned by user');
 			return res.status(404).json({ error: 'Счет не найден' });
 		}
 
 		// Проверяем существование категории
 		const category = await Category.findById(categoryId);
 		if (!category) {
-			console.log('❌ Category not found');
 			return res.status(404).json({ error: 'Категория не найдена' });
 		}
 
 		// Проверяем соответствие типа категории и транзакции
 		if (category.type !== type) {
-			console.log('❌ Category type mismatch:', category.type, '!=', type);
 			return res.status(400).json({ error: 'Тип категории не соответствует типу транзакции' });
 		}
 
@@ -183,11 +176,8 @@ console.log('=== CREATE TRANSACTION START ===');
 		const populatedTransaction = await Transaction.findById(transaction._id)
 			.populate('accountId', 'name currency')
 			.populate('categoryId', 'name type color icon');
-console.log('✅ Final populated transaction:', populatedTransaction);
-    console.log('=== CREATE TRANSACTION END ===');
 		res.status(201).json({ error: null, transaction: populatedTransaction });
 	} catch (error) {
-		console.error('❌ Error in createTransaction:', error);
 		res.status(400).json({ error: error.message });
 	}
 };
@@ -305,7 +295,7 @@ const getTransactionsByCategory = async (req, res) => {
 // Последние транзакции (для дашборда)
 const getRecentTransactions = async (req, res) => {
 	try {
-		const limit = parseInt(req.query.limit) || 10;
+		const limit = parseInt(req.query.limit) || 50;
 
 		const transactions = await Transaction.find({ userId: req.user._id })
 			.populate('accountId', 'name currency')

@@ -52,24 +52,19 @@ const AddTransaction = () => {
 		dispatch(fetchAccounts());
 		dispatch(fetchCategories());
 	}, [dispatch]);
-
+	
 	const handleSubmit = async transactionData => {
-		console.log('🔄 AddTransaction handleSubmit called');
-  console.log('Data:', transactionData);
 		try {
-			console.log('📤 Dispatching createTransaction...');
 			await dispatch(createTransaction(transactionData));
-			 console.log('✅ Transaction created successfully');
 			navigate('/dashboard');
 		} catch (error) {
 			console.error('Error creating transaction:', error);
 		}
 	};
-
+	
 	const handleBack = () => {
 		navigate(-1);
 	};
-
 	return (
 		<PageContainer>
 			<Header>

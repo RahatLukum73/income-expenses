@@ -38,7 +38,7 @@ export const fetchTransactions = (params = {}) => {
 
 			// [ИЗМЕНЕНИЕ] Базовые параметры пагинации
 			queryParams.append('page', params.page || 1);
-			queryParams.append('limit', params.limit || 10);
+			queryParams.append('limit', params.limit || 50);
 
 			// [ИЗМЕНЕНИЕ] Берем фильтры из params или из state
 			const state = getState();
@@ -107,27 +107,19 @@ export const fetchTransaction = id => {
 // Создание новой транзакции
 export const createTransaction = transactionData => {
 	return async dispatch => {
-		 console.log('🎯 createTransaction action started');
-    console.log('Transaction data:', transactionData);
 		dispatch({ type: CREATE_TRANSACTION_START });
 
 		try {
-			console.log('📤 Making API request to /transactions');
 			const response = await post('/transactions', transactionData);
-			console.log('📥 API response:', response);
 
 			// Нормализуем данные
 			const normalizedTransaction = normalizeTransaction(response);
-			console.log('📦 Normalized transaction:', normalizedTransaction);
-
 			dispatch({
 				type: CREATE_TRANSACTION_SUCCESS,
 				payload: normalizedTransaction,
 			});
-console.log('✅ Transaction created successfully');
 			return normalizedTransaction;
 		} catch (error) {
-			console.error('❌ Error in createTransaction:', error);
 			dispatch({
 				type: CREATE_TRANSACTION_FAIL,
 				payload: error.message,

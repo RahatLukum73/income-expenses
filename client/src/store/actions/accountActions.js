@@ -21,7 +21,9 @@ export const fetchAccounts = () => {
 
 		try {
 			const response = await get('/accounts');
-			const normalizedAccounts = normalizeAccounts(response);
+
+			const accountsFromServer = response.accounts || [];
+			const normalizedAccounts = normalizeAccounts(accountsFromServer);
 
 			dispatch({
 				type: FETCH_ACCOUNTS_SUCCESS,
@@ -43,8 +45,10 @@ export const createAccount = accountData => {
 
 		try {
 			const response = await post('/accounts', accountData);
-			const normalizedAccount = normalizeAccount(response);
 
+			const accountFromServer = response.account || response;
+
+			const normalizedAccount = normalizeAccount(accountFromServer);
 			dispatch({
 				type: CREATE_ACCOUNT_SUCCESS,
 				payload: normalizedAccount,
@@ -68,7 +72,9 @@ export const updateAccount = (id, updateData) => {
 
 		try {
 			const response = await put(`/accounts/${id}`, updateData);
-			const normalizedAccount = normalizeAccount(response);
+
+			const accountFromServer = response.account;
+			const normalizedAccount = normalizeAccount(accountFromServer);
 
 			dispatch({
 				type: UPDATE_ACCOUNT_SUCCESS,
