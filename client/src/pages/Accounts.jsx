@@ -112,6 +112,7 @@ const Accounts = () => {
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [editingAccount, setEditingAccount] = useState(null);
+
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [modalError, setModalError] = useState('');
 
@@ -162,20 +163,25 @@ const Accounts = () => {
 	};
 
 	const handleSubmitAccount = async formData => {
+		console.log('Accounts: handleSubmitAccount called', formData);
 		setIsSubmitting(true);
 		setModalError('');
 
 		try {
 			if (editingAccount) {
 				// Обновление существующего счета
+				console.log('Dispatching updateAccount...');
 				await dispatch(updateAccount(editingAccount._id, formData));
+				setIsModalOpen(false);
+				setEditingAccount(null);
 			} else {
 				// Создание нового счета
+				console.log('Dispatching createAccount...');
 				await dispatch(createAccount(formData));
+				setIsModalOpen(false);
+				setEditingAccount(null);
 			}
 
-			setIsModalOpen(false);
-			setEditingAccount(null);
 		} catch (error) {
 			setModalError(error.message || 'Произошла ошибка');
 		} finally {
@@ -190,6 +196,7 @@ const Accounts = () => {
 			setModalError('');
 		}
 	};
+
 
 	// Форматирование валюты
 	const formatCurrency = (amount, currency) => {
@@ -208,6 +215,7 @@ const Accounts = () => {
 
 	const totalBalance = calculateTotalBalance();
 	const userCurrency = user?.currency || 'RUB';
+	
 
 	return (
 		<PageContainer>

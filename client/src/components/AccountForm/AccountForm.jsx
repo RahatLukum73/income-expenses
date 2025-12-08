@@ -34,7 +34,7 @@ const ErrorMessage = styled.div`
 const FormActions = styled.div`
 	display: flex;
 	gap: 12px;
-	justify-content: flex-end;
+	justify-content: center;
 	margin-top: 20px;
 `;
 
@@ -85,7 +85,6 @@ const AVAILABLE_ICONS = [
 	'cash',
 	'piggy-bank',
 	'mobile',
-	'card',
 	'savings',
 	'invest',
 	'loan',
@@ -102,7 +101,6 @@ const CURRENCIES = [
 const AccountForm = ({
 	initialData = {},
 	onSubmit,
-	onCancel,
 	submitText = 'Сохранить',
 	loading = false,
 }) => {
@@ -132,6 +130,7 @@ const AccountForm = ({
 	}, [initialData]);
 
 	const handleChange = (field, value) => {
+		console.log(`AccountForm: handleChange - ${field} = ${value}`);
 		setFormData(prev => ({ ...prev, [field]: value }));
 
 		// Очищаем ошибку при изменении поля
@@ -159,6 +158,7 @@ const AccountForm = ({
 
 	const handleSubmit = e => {
 		e.preventDefault();
+		console.log('AccountForm: handleSubmit called');
 
 		if (validateForm()) {
 			// Преобразуем баланс в число
@@ -235,9 +235,6 @@ const AccountForm = ({
 			</FormGroup>
 
 			<FormActions>
-				<Button type="button" $variant="secondary" onClick={onCancel} disabled={loading}>
-					Отмена
-				</Button>
 				<Button type="submit" disabled={loading}>
 					{loading ? <Spinner size="small" /> : submitText}
 				</Button>

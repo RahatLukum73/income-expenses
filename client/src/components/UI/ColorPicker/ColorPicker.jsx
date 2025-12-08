@@ -32,6 +32,7 @@ const ColorPicker = ({ colors, selectedColor, onChange }) => {
 					$color={color}
 					$selected={color === selectedColor}
 					onClick={() => onChange(color)}
+					type="button"
 					aria-label={`Выбрать цвет ${color}`}
 				/>
 			))}

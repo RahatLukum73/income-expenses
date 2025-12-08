@@ -173,7 +173,6 @@ const iconEmojiMap = {
 	cash: '💵',
 	'piggy-bank': '🐷',
 	mobile: '📱',
-	card: '💳',
 	savings: '📈',
 	invest: '📊',
 	loan: '🏦',

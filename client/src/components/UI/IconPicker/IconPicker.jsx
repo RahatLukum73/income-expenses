@@ -48,6 +48,7 @@ const IconPicker = ({ icons, selectedIcon, onChange }) => {
 					key={icon}
 					$selected={icon === selectedIcon}
 					onClick={() => onChange(icon)}
+					type="button"
 					title={icon}
 				>
 					{iconMap[icon] || '📁'}
