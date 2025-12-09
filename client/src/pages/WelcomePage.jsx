@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import styled from 'styled-components';
 import { Button } from '../components/UI/Button/Button';
+import styled from 'styled-components';
 
 const WelcomeContainer = styled.div`
 	min-height: 100vh;
@@ -65,7 +65,6 @@ const ButtonGroup = styled.div`
 const WelcomePage = () => {
 	const { isLoggedIn } = useSelector(state => state.auth);
 
-	// Если пользователь уже авторизован, перенаправляем на dashboard
 	if (isLoggedIn) {
 		return <Navigate to="/dashboard" replace />;
 	}

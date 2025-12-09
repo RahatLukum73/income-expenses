@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import { LoadingButton, Button } from '../components/UI/Button/Button';
 import { Input } from '../components/UI/Input/Input';
 import Modal from '../components/UI/Modal/Modal';
 import { updateUserProfile, changePassword } from '../store/actions/authActions';
 import { useForm } from '../hooks/useForm';
+import styled from 'styled-components';
 
 const ProfileContainer = styled.div`
 	max-width: 600px;
@@ -121,12 +121,10 @@ const Profile = () => {
 	const [showPasswordModal, setShowPasswordModal] = useState(false);
 	const [successMessage, setSuccessMessage] = useState('');
 
-	// Состояния для редактируемых полей
 	const [email, setEmail] = useState(user?.email || '');
 	const [name, setName] = useState(user?.name || '');
 	const [currency, setCurrency] = useState(user?.currency || 'RUB');
 
-	// Валидационные схемы для пароля
 	const passwordInitialValues = {
 		currentPassword: '',
 		newPassword: '',
@@ -164,7 +162,6 @@ const Profile = () => {
 		resetForm: resetPasswordForm,
 	} = useForm(passwordInitialValues, onSubmitPassword);
 
-	// Обработчики для полей профиля
 	const handleSaveEmail = async () => {
 		try {
 			await dispatch(updateUserProfile({ email }));
@@ -239,7 +236,6 @@ const Profile = () => {
 			{successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
 
 			<ProfileCard>
-				{/* Поле Email */}
 				<FieldGroup>
 					<FieldLabel>Email</FieldLabel>
 					{editingField === 'email' ? (
@@ -271,7 +267,6 @@ const Profile = () => {
 					)}
 				</FieldGroup>
 
-				{/* Поле Имя */}
 				<FieldGroup>
 					<FieldLabel>Имя</FieldLabel>
 					{editingField === 'name' ? (
@@ -303,7 +298,6 @@ const Profile = () => {
 					)}
 				</FieldGroup>
 
-				{/* Поле Валюта */}
 				<FieldGroup>
 					<FieldLabel>Валюта</FieldLabel>
 					<FieldRow>
@@ -328,7 +322,6 @@ const Profile = () => {
 					</FieldRow>
 				</FieldGroup>
 
-				{/* Поле Пароль */}
 				<FieldGroup>
 					<FieldLabel>Пароль</FieldLabel>
 					<FieldRow>
@@ -340,7 +333,6 @@ const Profile = () => {
 				</FieldGroup>
 			</ProfileCard>
 
-			{/* Модальное окно смены пароля */}
 			<Modal isOpen={showPasswordModal} onClose={handlePasswordModalClose} title="Изменение пароля">
 				<ModalForm onSubmit={handlePasswordSubmit}>
 					<div>

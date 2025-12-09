@@ -1,14 +1,11 @@
-//
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import { LoadingButton } from '../components/UI/Button/Button';
 import { fetchCategory } from '../store/actions/categoryActions';
 import { fetchTransactionsByCategory } from '../store/actions/transactionActions';
 import { normalizeTransactions } from '../utils/normalizers';
+import styled from 'styled-components';
 
-// Styled components
 const PageContainer = styled.div`
 	padding: 24px;
 	max-width: 800px;
@@ -185,7 +182,6 @@ const ErrorState = styled.div`
 	font-size: 18px;
 `;
 
-// Функция для форматирования суммы
 const formatAmount = (amount, type) => {
 	if (!amount || isNaN(amount)) {
 		return 'Некорректная сумма';
@@ -200,7 +196,6 @@ const formatAmount = (amount, type) => {
 	return `${sign} ${formattedAmount} ₽`;
 };
 
-// Функция для форматирования даты
 const formatDate = dateString => {
 	if (!dateString) return '';
 
@@ -223,7 +218,6 @@ const CategoryDetails = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 
-	// Получаем данные из store
 	const {
 		currentCategory,
 		loading: categoryLoading,
@@ -236,10 +230,8 @@ const CategoryDetails = () => {
 		error: transactionsError,
 	} = useSelector(state => state.transactions);
 
-	// Нормализуем транзакции
 	const normalizedTransactions = normalizeTransactions(transactions);
 
-	// Загружаем данные при монтировании
 	useEffect(() => {
 		if (id) {
 			dispatch(fetchCategory(id));
@@ -247,12 +239,10 @@ const CategoryDetails = () => {
 		}
 	}, [dispatch, id]);
 
-	// Фильтруем транзакции по категории
 	const categoryTransactions = normalizedTransactions.filter(
 		transaction => transaction.category?._id === id
 	);
 
-	// Рассчитываем статистику
 	const totalAmount = categoryTransactions.reduce((sum, t) => sum + (t.amount || 0), 0);
 	const transactionsCount = categoryTransactions.length;
 

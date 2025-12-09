@@ -1,9 +1,7 @@
 import { getToken, setToken, removeToken } from '../utils/token';
 
-//const BASE_URL = 'http://localhost:3001/api';
 const BASE_URL = import.meta.env.MODE === 'development' ? '/api' : 'http://localhost:3001/api';
 
-// Базовая функция для API запросов
 export const apiRequest = async (endpoint, options = {}) => {
 	const url = `${BASE_URL}${endpoint}`;
 
@@ -14,7 +12,6 @@ export const apiRequest = async (endpoint, options = {}) => {
 		...options,
 	};
 
-	// Добавляем токен авторизации, если он есть
 	const token = getToken();
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
@@ -28,7 +25,6 @@ export const apiRequest = async (endpoint, options = {}) => {
 			throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
 		}
 
-		// Для DELETE запросов может не быть тела ответа
 		if (response.status === 204) {
 			return null;
 		}
@@ -40,7 +36,6 @@ export const apiRequest = async (endpoint, options = {}) => {
 	}
 };
 
-// Функции-обертки для различных HTTP методов
 export const get = url => apiRequest(url, { method: 'GET' });
 
 export const post = (url, data) =>
@@ -57,7 +52,4 @@ export const put = (url, data) =>
 
 export const del = url => apiRequest(url, { method: 'DELETE' });
 
-
-
-// Re-export утилит для работы с токеном для удобства
 export { getToken, setToken, removeToken };

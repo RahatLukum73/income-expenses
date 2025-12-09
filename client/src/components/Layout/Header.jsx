@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import BurgerMenu from './BurgerMenu';
@@ -55,7 +54,6 @@ const Nav = styled.nav`
 `;
 
 const Header = () => {
-	const { user } = useSelector(state => state.auth);
 
 	return (
 		<HeaderContainer>

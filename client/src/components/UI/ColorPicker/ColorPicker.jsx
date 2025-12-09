@@ -1,5 +1,5 @@
-// src/components/UI/ColorPicker/ColorPicker.jsx
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 const ColorPickerContainer = styled.div`
 	display: flex;
@@ -38,6 +38,12 @@ const ColorPicker = ({ colors, selectedColor, onChange }) => {
 			))}
 		</ColorPickerContainer>
 	);
+};
+
+ColorPicker.propTypes = {
+	colors: PropTypes.array.isRequired,
+	selectedColor: PropTypes.string,
+	onChange: PropTypes.func.isRequired,
 };
 
 export default ColorPicker;

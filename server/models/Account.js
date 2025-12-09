@@ -27,7 +27,7 @@ const accountSchema = new mongoose.Schema(
 		icon: {
 			type: String,
 			default: 'wallet',
-			enum: ['wallet', 'credit-card', 'bank', 'cash', 'piggy-bank', 'mobile', 'savings', 'invest', 'loan'],
+			enum: ['wallet', 'credit-card', 'bank', 'cash', 'piggy-bank', 'mobile', 'savings', 'invest'],
 		},
 		transactionCount: {
 			type: Number,

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 export const ModalOverlay = styled.div`
 	position: fixed;
@@ -62,6 +63,13 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 			</ModalContent>
 		</ModalOverlay>
 	);
+};
+
+Modal.propTypes = {
+	isOpen: PropTypes.bool.isRequired,
+	onClose: PropTypes.func.isRequired,
+	title: PropTypes.string.isRequired,
+	children: PropTypes.node,
 };
 
 export default Modal;

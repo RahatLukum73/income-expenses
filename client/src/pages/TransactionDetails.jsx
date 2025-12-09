@@ -1,13 +1,11 @@
-// pages/TransactionDetails.jsx
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import { LoadingButton } from '../components/UI/Button/Button';
 import Modal from '../components/UI/Modal/Modal';
 import { fetchTransaction, deleteTransaction } from '../store/actions/transactionActions';
+import styled from 'styled-components';
 
-// Styled components
 const PageContainer = styled.div`
 	padding: 24px;
 	max-width: 600px;
@@ -121,7 +119,6 @@ const DeleteModalButtons = styled.div`
 	justify-content: center;
 `;
 
-// Функция для форматирования даты в требуемый формат "31 августа 2025 в 14:30"
 const formatDateTime = dateString => {
 	if (!dateString) return 'Дата не указана';
 
@@ -147,7 +144,6 @@ const formatDateTime = dateString => {
 	}
 };
 
-// Функция для форматирования суммы с валютой
 const formatAmount = (amount, type) => {
 	if (!amount || isNaN(amount)) {
 		return 'Некорректная сумма';
@@ -169,17 +165,14 @@ const TransactionDetails = () => {
 
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-	// Получаем нормализованные данные
 	const { currentTransaction, loading, error } = useSelector(state => state.transactions);
 
-	// Загружаем транзакцию при монтировании
 	useEffect(() => {
 		if (id) {
 			dispatch(fetchTransaction(id));
 		}
 	}, [dispatch, id]);
 
-	// Обработчики действий
 	const handleEdit = () => {
 		navigate(`/edit-transaction/${id}`, {
 			state: { from: `/transaction/${id}` },
@@ -204,11 +197,9 @@ const TransactionDetails = () => {
 		setShowDeleteModal(false);
 	};
 
-	// Используем нормализованные данные
 	const account = currentTransaction?.account;
 	const category = currentTransaction?.category;
 
-	// Состояния загрузки и ошибок
 	if (loading) {
 		return (
 			<PageContainer>
@@ -261,7 +252,6 @@ const TransactionDetails = () => {
 			</Header>
 
 			<DetailsCard>
-				{/* Сумма */}
 				<DetailRow>
 					<DetailLabel>Сумма</DetailLabel>
 					<Amount type={currentTransaction.type}>
@@ -269,13 +259,11 @@ const TransactionDetails = () => {
 					</Amount>
 				</DetailRow>
 
-				{/* Тип операции */}
 				<DetailRow>
 					<DetailLabel>Тип операции</DetailLabel>
 					<DetailValue>{currentTransaction.type === 'income' ? 'Доход' : 'Расход'}</DetailValue>
 				</DetailRow>
 
-				{/* Счет */}
 				<DetailRow>
 					<DetailLabel>Счет</DetailLabel>
 					<DetailValue>
@@ -283,19 +271,16 @@ const TransactionDetails = () => {
 					</DetailValue>
 				</DetailRow>
 
-				{/* Категория */}
 				<DetailRow>
 					<DetailLabel>Категория</DetailLabel>
 					<DetailValue>{category ? category.name : 'Неизвестная категория'}</DetailValue>
 				</DetailRow>
 
-				{/* Дата и время */}
 				<DetailRow>
 					<DetailLabel>Дата и время</DetailLabel>
 					<DetailValue>{formatDateTime(currentTransaction.date)}</DetailValue>
 				</DetailRow>
 
-				{/* Описание */}
 				<DetailRow>
 					<DetailLabel>Описание</DetailLabel>
 					<Description $empty={!currentTransaction.description}>
@@ -304,7 +289,6 @@ const TransactionDetails = () => {
 				</DetailRow>
 			</DetailsCard>
 
-			{/* Модальное окно подтверждения удаления */}
 			<Modal isOpen={showDeleteModal} onClose={cancelDelete} title="Подтверждение удаления">
 				<DeleteModalContent>
 					<DeleteModalText>

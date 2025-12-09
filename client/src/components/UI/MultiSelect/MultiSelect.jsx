@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button } from '../Button/Button';
 
@@ -158,6 +159,13 @@ const MultiSelect = ({
 			)}
 		</MultiSelectContainer>
 	);
+};
+
+MultiSelect.propTypes = {
+	options: PropTypes.array.isRequired,
+	selectedValues: PropTypes.array,
+	onChange: PropTypes.func.isRequired,
+	placeholder: PropTypes.string,
 };
 
 export default MultiSelect;

@@ -1,11 +1,10 @@
-// components/Charts/PieChart.jsx
+import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import FloatingActionButton from '../UI/FloatingActionButton/FloatingActionButton';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-// Регистрируем необходимые компоненты Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ChartContainer = styled.div`
@@ -35,7 +34,6 @@ const NoDataMessage = styled.div`
 const PieChart = ({ data, type, title, activeTab }) => {
 	const navigate = useNavigate();
 
-	// Если нет данных, показываем сообщение
 	if (!data || data.length === 0) {
 		return (
 			<ChartContainer>
@@ -48,7 +46,6 @@ const PieChart = ({ data, type, title, activeTab }) => {
 		);
 	}
 
-	// Подготавливаем данные для Chart.js
 	const chartData = {
 		labels: data.map(item => item.categoryName),
 		datasets: [
@@ -122,11 +119,10 @@ const PieChart = ({ data, type, title, activeTab }) => {
 			if (elements.length > 0) {
 				const index = elements[0].index;
 				const categoryId = data[index].categoryId;
-				// Переход на страницу категории
 				navigate(`/category/${categoryId}`);
 			}
 		},
-		cutout: '50%', // Для doughnut chart, для обычного pie - убрать эту строку
+		cutout: '50%',
 	};
 
 	return (
@@ -138,6 +134,13 @@ const PieChart = ({ data, type, title, activeTab }) => {
 			<FloatingActionButton transactionType={activeTab} />
 		</ChartContainer>
 	);
+};
+
+PieChart.propTypes = {
+	data: PropTypes.array.isRequired,
+	type: PropTypes.oneOf(['income', 'expense']).isRequired,
+	title: PropTypes.string,
+	activeTab: PropTypes.oneOf(['income', 'expense']).isRequired,
 };
 
 export default PieChart;

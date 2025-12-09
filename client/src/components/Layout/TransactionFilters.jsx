@@ -1,38 +1,38 @@
-// src/components/Layout/TransactionFilters.jsx - ПОЛНАЯ ВЕРСИЯ С DEBOUNCE
 import { useState, useEffect, useCallback, useRef } from 'react';
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Input } from '../UI/Input/Input';
 import MultiSelect from '../UI/MultiSelect/MultiSelect';
 import Chip from '../UI/Chip/Chip';
 import { Button } from '../UI/Button/Button';
+import styled from 'styled-components';
 
-// [ДОБАВЛЯЕМ] Кастомный хук useDebounce
 const useDebounce = (callback, delay) => {
-  const timeoutRef = useRef(null);
+	const timeoutRef = useRef(null);
 
-  const debouncedCallback = useCallback((...args) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+	const debouncedCallback = useCallback(
+		(...args) => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
 
-    timeoutRef.current = setTimeout(() => {
-      callback(...args);
-    }, delay);
-  }, [callback, delay]);
+			timeoutRef.current = setTimeout(() => {
+				callback(...args);
+			}, delay);
+		},
+		[callback, delay]
+	);
 
-  // Очистка при размонтировании
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
+	useEffect(() => {
+		return () => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+		};
+	}, []);
 
-  return debouncedCallback;
+	return debouncedCallback;
 };
 
-// Styled components (без изменений)
 const FiltersContainer = styled.div`
 	background: white;
 	border-radius: 12px;
@@ -119,34 +119,30 @@ const TransactionFilters = ({
 	accounts = [],
 	transactionsCount = 0,
 }) => {
-	// Локальное состояние для немедленного отображения
 	const [localSearch, setLocalSearch] = useState(filters.search || '');
 	const [localCategories, setLocalCategories] = useState(filters.categories || []);
 	const [localAccounts, setLocalAccounts] = useState(filters.accounts || []);
 
-	// Синхронизация с внешним состоянием
 	useEffect(() => {
 		setLocalSearch(filters.search || '');
 		setLocalCategories(filters.categories || []);
 		setLocalAccounts(filters.accounts || []);
 	}, [filters]);
 
-	// [ДОБАВЛЯЕМ] Debounce функция для поиска
-	const debouncedSearchUpdate = useDebounce((searchValue) => {
+	const debouncedSearchUpdate = useDebounce(searchValue => {
 		onFiltersChange({
 			...filters,
 			search: searchValue,
 		});
-	}, 500); // 500ms задержка
+	}, 500);
 
-	// Обработчики с немедленным обновлением локального состояния
-	const handleSearchChange = (e) => {
+	const handleSearchChange = e => {
 		const value = e.target.value;
 		setLocalSearch(value);
 		debouncedSearchUpdate(value);
 	};
 
-	const handleCategoriesChange = (values) => {
+	const handleCategoriesChange = values => {
 		setLocalCategories(values);
 		onFiltersChange({
 			...filters,
@@ -154,7 +150,7 @@ const TransactionFilters = ({
 		});
 	};
 
-	const handleAccountsChange = (values) => {
+	const handleAccountsChange = values => {
 		setLocalAccounts(values);
 		onFiltersChange({
 			...filters,
@@ -166,14 +162,14 @@ const TransactionFilters = ({
 		setLocalSearch('');
 		setLocalCategories([]);
 		setLocalAccounts([]);
-		
+
 		const resetFilters = {
 			...filters,
 			search: '',
 			categories: [],
 			accounts: [],
 		};
-		
+
 		if (onReset) {
 			onReset();
 		} else {
@@ -181,8 +177,7 @@ const TransactionFilters = ({
 		}
 	};
 
-	// Удаление отдельных фильтров
-	const handleRemoveCategory = (categoryId) => {
+	const handleRemoveCategory = categoryId => {
 		const newCategories = localCategories.filter(id => id !== categoryId);
 		setLocalCategories(newCategories);
 		onFiltersChange({
@@ -191,7 +186,7 @@ const TransactionFilters = ({
 		});
 	};
 
-	const handleRemoveAccount = (accountId) => {
+	const handleRemoveAccount = accountId => {
 		const newAccounts = localAccounts.filter(id => id !== accountId);
 		setLocalAccounts(newAccounts);
 		onFiltersChange({
@@ -208,26 +203,22 @@ const TransactionFilters = ({
 		});
 	};
 
-	// Получение названия категории по ID
 	const getCategoryName = id => {
 		const category = categories.find(cat => cat._id === id);
 		return category ? category.name : 'Неизвестная категория';
 	};
 
-	// Получение названия счета по ID
 	const getAccountName = id => {
 		const account = accounts.find(acc => acc._id === id);
 		return account ? account.name : 'Неизвестный счет';
 	};
 
-	// Подсчет активных фильтров
 	const activeFiltersCount = [
 		localSearch ? 1 : 0,
 		localCategories.length,
 		localAccounts.length,
 	].reduce((a, b) => a + b, 0);
 
-	// Рендер опции категории
 	const renderCategoryOption = category => (
 		<CategoryOption>
 			<CategoryColor color={category.color} />
@@ -281,12 +272,7 @@ const TransactionFilters = ({
 
 			{activeFiltersCount > 0 && (
 				<SelectedFilters>
-					{localSearch && (
-						<Chip
-							label={`Поиск: "${localSearch}"`}
-							onRemove={handleClearSearch}
-						/>
-					)}
+					{localSearch && <Chip label={`Поиск: "${localSearch}"`} onRemove={handleClearSearch} />}
 
 					{localCategories.map(categoryId => (
 						<Chip
@@ -307,16 +293,21 @@ const TransactionFilters = ({
 			)}
 
 			<ActionButtons>
-				<Button 
-					$variant="secondary" 
-					onClick={handleReset} 
-					disabled={activeFiltersCount === 0}
-				>
+				<Button $variant="secondary" onClick={handleReset} disabled={activeFiltersCount === 0}>
 					Сбросить фильтры
 				</Button>
 			</ActionButtons>
 		</FiltersContainer>
 	);
+};
+
+TransactionFilters.propTypes = {
+	filters: PropTypes.object.isRequired,
+	onFiltersChange: PropTypes.func.isRequired,
+	onReset: PropTypes.func,
+	categories: PropTypes.array,
+	accounts: PropTypes.array,
+	transactionsCount: PropTypes.number,
 };
 
 export default TransactionFilters;

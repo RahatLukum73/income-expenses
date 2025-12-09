@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import TransactionForm from '../components/TransactionForm/TransactionForm';
 import { createTransaction } from '../store/actions/transactionActions';
 import { fetchAccounts } from '../store/actions/accountActions';
 import { fetchCategories } from '../store/actions/categoryActions';
+import TransactionForm from '../components/TransactionForm/TransactionForm';
+import styled from 'styled-components';
 
-// Styled components
 const PageContainer = styled.div`
 	padding: 24px;
 	max-width: 600px;
@@ -47,12 +46,11 @@ const AddTransaction = () => {
 
 	const { loading: transactionLoading } = useSelector(state => state.transactions);
 
-	// Загружаем счета и категории при монтировании
 	useEffect(() => {
 		dispatch(fetchAccounts());
 		dispatch(fetchCategories());
 	}, [dispatch]);
-	
+
 	const handleSubmit = async transactionData => {
 		try {
 			await dispatch(createTransaction(transactionData));
@@ -61,7 +59,7 @@ const AddTransaction = () => {
 			console.error('Error creating transaction:', error);
 		}
 	};
-	
+
 	const handleBack = () => {
 		navigate(-1);
 	};

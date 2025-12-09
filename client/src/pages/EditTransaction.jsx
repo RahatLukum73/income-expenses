@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
 import TransactionForm from '../components/TransactionForm/TransactionForm';
 import { fetchTransaction, updateTransaction } from '../store/actions/transactionActions';
 import { fetchAccounts } from '../store/actions/accountActions';
 import { fetchCategories } from '../store/actions/categoryActions';
 import { prepareTransactionForForm } from '../utils/normalizers';
+import styled from 'styled-components';
 
-// Добавляем недостающие styled components
 const PageContainer = styled.div`
 	padding: 24px;
 	max-width: 600px;
@@ -71,21 +70,19 @@ const EditTransaction = () => {
 	const { accounts, loading: accountsLoading } = useSelector(state => state.accounts);
 	const { categories, loading: categoriesLoading } = useSelector(state => state.categories);
 
-	// Загружаем данные при монтировании
 	useEffect(() => {
-		dispatch(fetchAccounts());
-		dispatch(fetchCategories());
+		if (!accounts.loaded) dispatch(fetchAccounts());
+		if (!categories.loaded) dispatch(fetchCategories());
 
 		if (id) {
 			dispatch(fetchTransaction(id));
 		}
-	}, [dispatch, id]);
+	}, [dispatch, id, accounts.loaded, categories.loaded]);
 
 	const handleSubmit = async transactionData => {
 		try {
 			await dispatch(updateTransaction(id, transactionData));
 
-			// Редирект обратно на страницу деталей транзакции
 			const from = location.state?.from || `/transaction/${id}`;
 			navigate(from);
 		} catch (error) {
@@ -97,7 +94,6 @@ const EditTransaction = () => {
 		navigate(-1);
 	};
 
-	// Подготавливаем данные для формы
 	const initialValues = prepareTransactionForForm(currentTransaction);
 	const isLoading = transactionLoading || accountsLoading || categoriesLoading;
 

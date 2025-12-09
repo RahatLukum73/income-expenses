@@ -1,6 +1,6 @@
-// src/components/AccountCard/AccountCard.jsx
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Button } from '../UI/Button/Button';
+import styled from 'styled-components';
 
 const Card = styled.div`
 	background: white;
@@ -165,7 +165,6 @@ const DeleteButton = styled(ActionButton)`
 	}
 `;
 
-// Маппинг эмодзи для иконок
 const iconEmojiMap = {
 	wallet: '💰',
 	'credit-card': '💳',
@@ -175,7 +174,6 @@ const iconEmojiMap = {
 	mobile: '📱',
 	savings: '📈',
 	invest: '📊',
-	loan: '🏦',
 };
 
 const AccountCard = ({ account, onEdit, onDelete, onViewTransactions, formatCurrency }) => {
@@ -241,6 +239,14 @@ const AccountCard = ({ account, onEdit, onDelete, onViewTransactions, formatCurr
 			</CardActions>
 		</Card>
 	);
+};
+
+AccountCard.propTypes = {
+	account: PropTypes.object.isRequired,
+	onEdit: PropTypes.func.isRequired,
+	onDelete: PropTypes.func.isRequired,
+	onViewTransactions: PropTypes.func,
+	formatCurrency: PropTypes.func,
 };
 
 export default AccountCard;

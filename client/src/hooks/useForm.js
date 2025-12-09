@@ -11,7 +11,6 @@ export const useForm = (initialValues, onSubmit) => {
 			[field]: value,
 		}));
 
-		// Убираем ошибку при изменении поля
 		if (errors[field]) {
 			setErrors(prev => ({
 				...prev,
@@ -30,7 +29,6 @@ export const useForm = (initialValues, onSubmit) => {
 	const handleSubmit = async e => {
 		e.preventDefault();
 
-		// Помечаем все поля как touched для показа ошибок
 		const allTouched = Object.keys(values).reduce((acc, key) => {
 			acc[key] = true;
 			return acc;

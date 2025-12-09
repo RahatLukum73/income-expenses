@@ -1,6 +1,6 @@
-// components/UI/FloatingActionButton/FloatingActionButton.jsx
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 const FloatingButton = styled(Link)`
 	width: 100px;
@@ -32,7 +32,19 @@ const FloatingButton = styled(Link)`
 `;
 
 const FloatingActionButton = ({ transactionType = 'expense' }) => {
-	return <FloatingButton to="/add-transaction" state={{ transactionType }}>+</FloatingButton>;
+	return (
+		<FloatingButton to="/add-transaction" state={{ transactionType }}>
+			+
+		</FloatingButton>
+	);
+};
+
+FloatingActionButton.propTypes = {
+	transactionType: PropTypes.oneOf(['income', 'expense']),
+};
+
+FloatingActionButton.defaultProps = {
+	transactionType: 'expense',
 };
 
 export default FloatingActionButton;

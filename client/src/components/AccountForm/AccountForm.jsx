@@ -1,11 +1,11 @@
-// src/components/AccountForm/AccountForm.jsx
 import { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Input } from '../UI/Input/Input';
 import { Button } from '../UI/Button/Button';
+import { Spinner } from '../UI/Spinner/Spinner';
 import ColorPicker from '../UI/ColorPicker/ColorPicker';
 import IconPicker from '../UI/IconPicker/IconPicker';
-import { Spinner } from '../UI/Spinner/Spinner';
+import styled from 'styled-components';
 
 const Form = styled.form`
 	display: flex;
@@ -63,21 +63,19 @@ const BalanceInput = styled(Input)`
 	-moz-appearance: textfield;
 `;
 
-// Палитра цветов
 const COLOR_PALETTE = [
-	'#3B82F6', // blue
-	'#10B981', // emerald
-	'#F59E0B', // amber
-	'#EF4444', // red
-	'#8B5CF6', // violet
-	'#EC4899', // pink
-	'#14B8A6', // teal
-	'#F97316', // orange
-	'#6366F1', // indigo
-	'#84CC16', // lime
+	'#3B82F6',
+	'#10B981',
+	'#F59E0B',
+	'#EF4444',
+	'#8B5CF6',
+	'#EC4899',
+	'#14B8A6',
+	'#F97316',
+	'#6366F1',
+	'#84CC16',
 ];
 
-// Доступные иконки
 const AVAILABLE_ICONS = [
 	'wallet',
 	'credit-card',
@@ -90,7 +88,6 @@ const AVAILABLE_ICONS = [
 	'loan',
 ];
 
-// Валюты
 const CURRENCIES = [
 	{ value: 'RUB', label: 'Рубли (RUB)' },
 	{ value: 'USD', label: 'Доллары (USD)' },
@@ -98,12 +95,7 @@ const CURRENCIES = [
 	{ value: 'KZT', label: 'Тенге (KZT)' },
 ];
 
-const AccountForm = ({
-	initialData = {},
-	onSubmit,
-	submitText = 'Сохранить',
-	loading = false,
-}) => {
+const AccountForm = ({ initialData = {}, onSubmit, submitText = 'Сохранить', loading = false }) => {
 	const [formData, setFormData] = useState({
 		name: '',
 		balance: 0,
@@ -115,7 +107,6 @@ const AccountForm = ({
 
 	const [errors, setErrors] = useState({});
 
-	// Инициализация формы при изменении initialData
 	useEffect(() => {
 		if (initialData) {
 			setFormData({
@@ -133,7 +124,6 @@ const AccountForm = ({
 		console.log(`AccountForm: handleChange - ${field} = ${value}`);
 		setFormData(prev => ({ ...prev, [field]: value }));
 
-		// Очищаем ошибку при изменении поля
 		if (errors[field]) {
 			setErrors(prev => ({ ...prev, [field]: '' }));
 		}
@@ -161,7 +151,6 @@ const AccountForm = ({
 		console.log('AccountForm: handleSubmit called');
 
 		if (validateForm()) {
-			// Преобразуем баланс в число
 			const dataToSubmit = {
 				...formData,
 				balance: parseFloat(formData.balance) || 0,
@@ -241,6 +230,13 @@ const AccountForm = ({
 			</FormActions>
 		</Form>
 	);
+};
+
+AccountForm.propTypes = {
+	initialData: PropTypes.object,
+	onSubmit: PropTypes.func.isRequired,
+	submitText: PropTypes.string,
+	loading: PropTypes.bool,
 };
 
 export default AccountForm;

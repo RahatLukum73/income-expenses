@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-//import { ReactComponent as CloseIcon } from './close-icon.svg'; // или используем иконку из библиотеки
+import PropTypes from 'prop-types';
 
 const ChipContainer = styled.div`
 	display: inline-flex;
@@ -45,11 +45,16 @@ const Chip = ({ label, onRemove, ...props }) => {
 			<ChipLabel>{label}</ChipLabel>
 			{onRemove && (
 				<CloseButton onClick={onRemove} aria-label="Удалить">
-					×
+					✕
 				</CloseButton>
 			)}
 		</ChipContainer>
 	);
 };
 
+Chip.propTypes = {
+	label: PropTypes.string.isRequired,
+	onRemove: PropTypes.func,
+};
 export default Chip;
+

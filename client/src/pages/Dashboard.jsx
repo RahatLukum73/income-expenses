@@ -1,6 +1,7 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types'
 import styled from 'styled-components';
 import { fetchSummary } from '../store/actions/summaryActions';
 import { fetchCategories } from '../store/actions/categoryActions';
@@ -14,7 +15,6 @@ import PieChart from '../components/Charts/PieChart';
 import {
 	getCurrencySymbol,
 	groupTransactionsByDate,
-	getPeriodDates,
 	formatTime,
 } from '../utils/dateHelpers';
 
@@ -225,7 +225,6 @@ const ErrorMessage = styled.div`
 	text-align: center;
 `;
 
-// Функция для расчета данных диаграммы
 const calculateChartData = (transactions, categories) => {
 	const transactionsArray = Array.isArray(transactions) ? transactions : [];
 	const categoriesArray = Array.isArray(categories) ? categories : [];
@@ -283,7 +282,6 @@ const Dashboard = () => {
 		error: accountsError,
 	} = useSelector(state => state.accounts);
 
-	// Используем хук useTransactions
 	const {
 		transactions,
 		loading: transactionsLoading,
@@ -295,18 +293,15 @@ const Dashboard = () => {
 		changePage,
 	} = useTransactions();
 
-	// [ИЗМЕНЯЕМ] Используем значения из filters вместо локального состояния
 	const activeTab = transactionFilters?.type || 'expense';
 	const activePeriod = transactionFilters?.period || 'month';
 
-	// Загружаем данные при монтировании
 	useEffect(() => {
 		dispatch(fetchSummary());
 		dispatch(fetchCategories());
 		dispatch(fetchAccounts());
 	}, [dispatch]);
 
-	// [ИЗМЕНЯЕМ] Обработчик изменения периода
 	const handlePeriodChange = period => {
 		updateFilters({
 			...transactionFilters,
@@ -314,7 +309,6 @@ const Dashboard = () => {
 		});
 	};
 
-	// [ИЗМЕНЯЕМ] Обработчик изменения вкладки
 	const handleTabChange = tab => {
 		updateFilters({
 			...transactionFilters,
@@ -322,7 +316,6 @@ const Dashboard = () => {
 		});
 	};
 
-	// Обработчик изменения фильтров
 	const handleFiltersChange = newFilters => {
 		updateFilters({
 			...transactionFilters,
@@ -330,28 +323,23 @@ const Dashboard = () => {
 		});
 	};
 
-	// Обработчик изменения страницы
 	const handlePageChange = page => {
 		changePage(page);
 	};
 
-	// Получаем символ валюты
 	const currencySymbol = getCurrencySymbol(user?.currency || 'RUB');
 
-	// Используем transactions из хука
 	const transactionsArray = Array.isArray(transactions) ? transactions : [];
 
 	const totalIncome = stats?.totalIncome || 0;
 	const totalExpenses = stats?.totalExpenses || 0;
-	// [ИСПРАВЛЕНО] Диаграмма - используем функцию calculateChartData
+
 	const chartData = useMemo(() => {
-		// Если есть stats из API - используем их
 		if (stats?.categoryStats && stats.categoryStats.length > 0) {
 			const totalAmount = activeTab === 'income' ? stats.totalIncome : stats.totalExpenses;
 
 			return stats.categoryStats
 				.filter(item => {
-					// Фильтруем по типу (income/expense)
 					const category = categories.find(cat => cat._id === item.categoryId);
 					return category?.type === activeTab;
 				})
@@ -366,10 +354,8 @@ const Dashboard = () => {
 				.sort((a, b) => b.amount - a.amount);
 		}
 
-		// Fallback: используем старую логику если stats нет
 		return calculateChartData(transactionsArray, categories);
 	}, [stats, activeTab, categories, transactionsArray]);
-	// Группируем транзакции по датам
 	const groupedTransactions = useMemo(
 		() => groupTransactionsByDate(transactionsArray),
 		[transactionsArray]
@@ -378,14 +364,12 @@ const Dashboard = () => {
 	const loading = summaryLoading || categoriesLoading || accountsLoading || transactionsLoading;
 	const error = summaryError || categoriesError || accountsError || transactionsError;
 
-	// Обработчик клика по транзакции
 	const handleTransactionClick = transactionId => {
 		if (transactionId) {
 			navigate(`/transaction/${transactionId}`);
 		}
 	};
 
-	// Периоды для фильтрации
 	const periods = [
 		{ id: 'day', label: 'День' },
 		{ id: 'week', label: 'Неделя' },
@@ -405,7 +389,6 @@ const Dashboard = () => {
 		<DashboardContainer>
 			{error && <ErrorMessage>Ошибка загрузки данных: {error}</ErrorMessage>}
 
-			{/* Блок баланса */}
 			<BalanceCard>
 				<BalanceTitle>Общий баланс</BalanceTitle>
 				<BalanceAmount>
@@ -413,7 +396,6 @@ const Dashboard = () => {
 				</BalanceAmount>
 			</BalanceCard>
 
-			{/* Статистика за период */}
 			<StatsContainer>
 				<StatCard>
 					<StatTitle>Доходы</StatTitle>
@@ -430,7 +412,6 @@ const Dashboard = () => {
 				</StatCard>
 			</StatsContainer>
 
-			{/* Переключатель расходы/доходы */}
 			<ToggleContainer>
 				<ToggleButton $active={activeTab === 'expense'} onClick={() => handleTabChange('expense')}>
 					РАСХОДЫ
@@ -440,7 +421,6 @@ const Dashboard = () => {
 				</ToggleButton>
 			</ToggleContainer>
 
-			{/* Выбор периода */}
 			<PeriodSelector>
 				{periods.map(period => (
 					<PeriodButton
@@ -454,7 +434,6 @@ const Dashboard = () => {
 				))}
 			</PeriodSelector>
 
-			{/* Фильтры транзакций */}
 			<TransactionFilters
 				filters={transactionFilters || {}}
 				onFiltersChange={handleFiltersChange}
@@ -463,7 +442,6 @@ const Dashboard = () => {
 				transactionsCount={transactionsArray.length}
 			/>
 
-			{/* Круговая диаграмма - [ИСПРАВЛЕНО] проверяем chartData */}
 			{chartData && chartData.length > 0 && (
 				<ChartsContainer>
 					<PieChart
@@ -475,7 +453,6 @@ const Dashboard = () => {
 				</ChartsContainer>
 			)}
 
-			{/* Список транзакций */}
 			<TransactionsSection>
 				<SectionTitle>
 					{activeTab === 'income' ? 'Последние доходы' : 'Последние расходы'}
@@ -518,7 +495,6 @@ const Dashboard = () => {
 							</DateGroup>
 						))}
 
-						{/* Добавляем пагинацию */}
 						{pagination && pagination.pages > 1 && (
 							<Pagination
 								currentPage={pagination.page || 1}
@@ -544,6 +520,83 @@ const Dashboard = () => {
 			</TransactionsSection>
 		</DashboardContainer>
 	);
+};
+
+StatAmount.propTypes = {
+	color: PropTypes.string,
+	children: PropTypes.node,
+};
+
+ToggleButton.propTypes = {
+	$active: PropTypes.bool,
+	onClick: PropTypes.func,
+	children: PropTypes.node.isRequired,
+};
+
+PeriodButton.propTypes = {
+	$active: PropTypes.bool,
+	$variant: PropTypes.string,
+	onClick: PropTypes.func,
+	children: PropTypes.node.isRequired,
+};
+
+CategoryColor.propTypes = {
+	color: PropTypes.string,
+};
+
+TransactionAmount.propTypes = {
+	type: PropTypes.oneOf(['income', 'expense']).isRequired,
+	children: PropTypes.node,
+};
+
+const categoryPropType = PropTypes.shape({
+	_id: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
+	type: PropTypes.oneOf(['income', 'expense']).isRequired,
+	color: PropTypes.string.isRequired,
+});
+
+const transactionPropType = PropTypes.shape({
+	_id: PropTypes.string.isRequired,
+	amount: PropTypes.number.isRequired,
+	type: PropTypes.oneOf(['income', 'expense']).isRequired,
+	date: PropTypes.string.isRequired,
+	category: categoryPropType,
+});
+
+const statsPropType = PropTypes.shape({
+	totalIncome: PropTypes.number.isRequired,
+	totalExpenses: PropTypes.number.isRequired,
+	categoryStats: PropTypes.arrayOf(
+		PropTypes.shape({
+			categoryId: PropTypes.string.isRequired,
+			categoryName: PropTypes.string.isRequired,
+			amount: PropTypes.number.isRequired,
+		})
+	),
+});
+
+const paginationPropType = PropTypes.shape({
+	page: PropTypes.number.isRequired,
+	pages: PropTypes.number.isRequired,
+	total: PropTypes.number.isRequired,
+	limit: PropTypes.number,
+});
+
+const transactionFiltersPropType = PropTypes.shape({
+	type: PropTypes.oneOf(['income', 'expense']).isRequired,
+	period: PropTypes.oneOf(['day', 'week', 'month', 'year']).isRequired,
+	search: PropTypes.string,
+	categories: PropTypes.arrayOf(PropTypes.string),
+	accounts: PropTypes.arrayOf(PropTypes.string),
+});
+
+export {
+	categoryPropType,
+	transactionPropType,
+	statsPropType,
+	paginationPropType,
+	transactionFiltersPropType,
 };
 
 export default Dashboard;

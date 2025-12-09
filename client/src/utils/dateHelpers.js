@@ -1,4 +1,3 @@
-// // utils/dateHelpers.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 export const formatDate = date => {
 	return new Date(date).toLocaleDateString('ru-RU', {
 		day: 'numeric',
@@ -17,7 +16,6 @@ export const getCurrencySymbol = currency => {
 	return symbols[currency] || currency;
 };
 
-// Функция для группировки дат (сегодня, вчера, и т.д.)
 export const groupTransactionsByDate = transactions => {
 	if (!Array.isArray(transactions)) return {};
 
@@ -53,7 +51,6 @@ export const groupTransactionsByDate = transactions => {
 	return groups;
 };
 
-// [ИЗМЕНЕНИЕ] Функция для получения дат периода - ИСПРАВЛЕНА!
 export const getPeriodDates = period => {
 	const now = new Date();
 	const startDate = new Date();
@@ -85,23 +82,21 @@ export const getPeriodDates = period => {
 			endDate.setHours(23, 59, 59, 999);
 	}
 
-	// [ИЗМЕНЕНИЕ] Возвращаем ISO строки с полным временем
 	return {
-		startDate: startDate.toISOString(), // Пример: '2025-11-07T00:00:00.000Z'
-		endDate: endDate.toISOString(),     // Пример: '2025-12-07T23:59:59.999Z'
+		startDate: startDate.toISOString(),
+		endDate: endDate.toISOString(),
 	};
 };
 
-// [ИЗМЕНЕНИЕ] Добавляем вспомогательную функцию для старых компонентов
 export const getPeriodDatesShort = period => {
 	const dates = getPeriodDates(period);
 	return {
-		startDate: dates.startDate.split('T')[0], // Только дата
-		endDate: dates.endDate.split('T')[0],     // Только дата
+		startDate: dates.startDate.split('T')[0],
+		endDate: dates.endDate.split('T')[0],
 	};
 };
 
-// Функция для форматирования времени
+
 export const formatTime = dateString => {
 	return new Date(dateString).toLocaleTimeString('ru-RU', {
 		hour: '2-digit',

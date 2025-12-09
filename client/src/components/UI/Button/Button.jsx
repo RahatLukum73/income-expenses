@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import PropTypes from 'prop-types';
 
 const spin = keyframes`
   0% { transform: rotate(0deg); }
@@ -51,7 +52,15 @@ export const Button = styled.button`
 	}
 `;
 
-// Компонент кнопки с поддержкой loading состояния
+Button.propTypes = {
+	children: PropTypes.node,
+	type: PropTypes.oneOf(['button', 'submit', 'reset']),
+	$variant: PropTypes.oneOf(['primary', 'secondary']),
+	disabled: PropTypes.bool,
+	$fullWidth: PropTypes.bool,
+	onClick: PropTypes.func,
+};
+
 export const LoadingButton = ({ children, loading, ...props }) => (
 	<Button {...props} disabled={props.disabled || loading}>
 		<ButtonContent>
@@ -60,3 +69,11 @@ export const LoadingButton = ({ children, loading, ...props }) => (
 		</ButtonContent>
 	</Button>
 );
+
+LoadingButton.propTypes = {
+	children: PropTypes.node.isRequired,
+	loading: PropTypes.bool,
+	disabled: PropTypes.bool,
+	onClick: PropTypes.func,
+	$variant: PropTypes.oneOf(['primary', 'secondary']),
+};

@@ -1,5 +1,6 @@
 // src/components/UI/IconPicker/IconPicker.jsx
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 const IconPickerContainer = styled.div`
 	display: flex;
@@ -37,7 +38,6 @@ const iconMap = {
 	card: '💳',
 	savings: '📈',
 	invest: '📊',
-	loan: '🏦',
 };
 
 const IconPicker = ({ icons, selectedIcon, onChange }) => {
@@ -56,6 +56,12 @@ const IconPicker = ({ icons, selectedIcon, onChange }) => {
 			))}
 		</IconPickerContainer>
 	);
+};
+
+IconPicker.propTypes = {
+	icons: PropTypes.array.isRequired,
+	selectedIcon: PropTypes.string,
+	onChange: PropTypes.func.isRequired,
 };
 
 export default IconPicker;

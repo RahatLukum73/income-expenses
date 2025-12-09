@@ -1,161 +1,11 @@
-// import { useState, useEffect } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { Link, useNavigate } from 'react-router-dom';
-// import styled from 'styled-components';
-// import { registerUser, clearError } from '../store/actions/authActions';
-// import { Input } from '../components/UI/Input/Input';
-// import { Button } from '../components/UI/Button/Button';
-
-// const RegisterContainer = styled.div`
-// 	min-height: 100vh;
-// 	display: flex;
-// 	align-items: center;
-// 	justify-content: center;
-// 	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-// 	padding: 20px;
-// `;
-
-// const RegisterForm = styled.form`
-// 	background: white;
-// 	padding: 48px;
-// 	border-radius: 16px;
-// 	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-// 	width: 100%;
-// 	max-width: 400px;
-// `;
-
-// const Title = styled.h2`
-// 	text-align: center;
-// 	margin-bottom: 32px;
-// 	color: #333;
-// 	font-size: 28px;
-// 	font-weight: 700;
-// `;
-
-// const ErrorMessage = styled.div`
-// 	background: #f8d7da;
-// 	color: #721c24;
-// 	padding: 12px 16px;
-// 	border-radius: 8px;
-// 	margin-bottom: 24px;
-// 	border: 1px solid #f5c6cb;
-// `;
-
-// const FormGroup = styled.div`
-// 	margin-bottom: 24px;
-// `;
-
-// const LinkContainer = styled.p`
-// 	text-align: center;
-// 	margin-top: 24px;
-// 	color: #6c757d;
-// `;
-
-// const StyledLink = styled(Link)`
-// 	color: #007bff;
-// 	text-decoration: none;
-// 	font-weight: 600;
-
-// 	&:hover {
-// 		text-decoration: underline;
-// 	}
-// `;
-
-// const Register = () => {
-// 	const dispatch = useDispatch();
-// 	const navigate = useNavigate();
-// 	const { loading, error, isLoggedIn } = useSelector(state => state.auth);
-
-// 	const [formData, setFormData] = useState({
-// 		name: '',
-// 		email: '',
-// 		password: '',
-// 	});
-
-// 	useEffect(() => {
-// 		if (isLoggedIn) {
-// 			navigate('/dashboard');
-// 		}
-// 	}, [isLoggedIn, navigate]);
-
-// 	const handleChange = e => {
-// 		setFormData({
-// 			...formData,
-// 			[e.target.name]: e.target.value,
-// 		});
-
-// 		if (error) {
-// 			dispatch(clearError());
-// 		}
-// 	};
-
-// 	const handleSubmit = e => {
-// 		e.preventDefault();
-// 		dispatch(registerUser(formData));
-// 	};
-
-// 	return (
-// 		<RegisterContainer>
-// 			<RegisterForm onSubmit={handleSubmit}>
-// 				<Title>Create Account</Title>
-
-// 				{error && <ErrorMessage>{error}</ErrorMessage>}
-
-// 				<FormGroup>
-// 					<Input
-// 						type="text"
-// 						name="name"
-// 						placeholder="Full name"
-// 						value={formData.name}
-// 						onChange={handleChange}
-// 						required
-// 					/>
-// 				</FormGroup>
-
-// 				<FormGroup>
-// 					<Input
-// 						type="email"
-// 						name="email"
-// 						placeholder="Email address"
-// 						value={formData.email}
-// 						onChange={handleChange}
-// 						required
-// 					/>
-// 				</FormGroup>
-
-// 				<FormGroup>
-// 					<Input
-// 						type="password"
-// 						name="password"
-// 						placeholder="Password"
-// 						value={formData.password}
-// 						onChange={handleChange}
-// 						required
-// 					/>
-// 				</FormGroup>
-
-// 				<Button type="submit" disabled={loading} $fullWidth>
-// 					{loading ? 'Creating account...' : 'Create Account'}
-// 				</Button>
-
-// 				<LinkContainer>
-// 					Already have an account? <StyledLink to="/login">Sign in</StyledLink>
-// 				</LinkContainer>
-// 			</RegisterForm>
-// 		</RegisterContainer>
-// 	);
-// };
-
-// export default Register;
-
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import { registerUser, clearError } from '../store/actions/authActions';
 import { Input } from '../components/UI/Input/Input';
 import { Button } from '../components/UI/Button/Button';
 import { registerSchema } from '../utils/validationSchemas';
+import styled from 'styled-components';
 
 const RegisterContainer = styled.div`
 	min-height: 100vh;
@@ -266,14 +116,12 @@ const Register = () => {
 	const [errors, setErrors] = useState({});
 	const [touched, setTouched] = useState({});
 
-	// Редирект при успешной регистрации
 	useEffect(() => {
 		if (isLoggedIn) {
 			navigate('/dashboard');
 		}
 	}, [isLoggedIn, navigate]);
 
-	// Очистка ошибки при размонтировании
 	useEffect(() => {
 		return () => {
 			dispatch(clearError());
@@ -286,7 +134,6 @@ const Register = () => {
 			[field]: value,
 		}));
 
-		// Убираем ошибку при изменении поля
 		if (errors[field]) {
 			setErrors(prev => ({
 				...prev,
@@ -301,7 +148,6 @@ const Register = () => {
 			[field]: true,
 		}));
 
-		// Валидируем поле при blur
 		validateField(field, formData[field]);
 	};
 
@@ -341,7 +187,6 @@ const Register = () => {
 	const handleSubmit = async e => {
 		e.preventDefault();
 
-		// Помечаем все поля как touched для показа ошибок
 		const allTouched = Object.keys(formData).reduce((acc, key) => {
 			acc[key] = true;
 			return acc;

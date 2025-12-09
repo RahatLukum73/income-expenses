@@ -1,6 +1,6 @@
-// src/components/UI/Pagination/Pagination.jsx
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Button } from '../Button/Button';
+import styled from 'styled-components';
 
 const PaginationContainer = styled.div`
 	display: flex;
@@ -85,12 +85,10 @@ const Pagination = ({
 	onLimitChange,
 	showPageSize = true,
 }) => {
-	// Если всего 1 страница - не показываем пагинацию
 	if (totalPages <= 1 && !showPageSize) {
 		return null;
 	}
 
-	// Расчет отображаемых страниц
 	const getDisplayedPages = () => {
 		const maxDisplayed = 5;
 		const halfDisplayed = Math.floor(maxDisplayed / 2);
@@ -98,12 +96,10 @@ const Pagination = ({
 		let startPage = Math.max(1, currentPage - halfDisplayed);
 		let endPage = Math.min(totalPages, currentPage + halfDisplayed);
 
-		// Корректируем если в начале
 		if (currentPage <= halfDisplayed) {
 			endPage = Math.min(totalPages, maxDisplayed);
 		}
 
-		// Корректируем если в конце
 		if (currentPage > totalPages - halfDisplayed) {
 			startPage = Math.max(1, totalPages - maxDisplayed + 1);
 		}
@@ -146,7 +142,6 @@ const Pagination = ({
 			</PaginationInfo>
 
 			<PaginationControls>
-				{/* Кнопка "Назад" */}
 				<PageButton
 					$variant="secondary"
 					onClick={() => handlePageClick(currentPage - 1)}
@@ -156,7 +151,6 @@ const Pagination = ({
 					←
 				</PageButton>
 
-				{/* Первая страница с многоточием если нужно */}
 				{displayedPages[0] > 1 && (
 					<>
 						<PageButton
@@ -170,7 +164,6 @@ const Pagination = ({
 					</>
 				)}
 
-				{/* Отображаемые страницы */}
 				{displayedPages.map(page => (
 					<PageButton
 						key={page}
@@ -182,7 +175,6 @@ const Pagination = ({
 					</PageButton>
 				))}
 
-				{/* Последняя страница с многоточием если нужно */}
 				{displayedPages[displayedPages.length - 1] < totalPages && (
 					<>
 						{displayedPages[displayedPages.length - 1] < totalPages - 1 && <Ellipsis>...</Ellipsis>}
@@ -196,7 +188,6 @@ const Pagination = ({
 					</>
 				)}
 
-				{/* Кнопка "Вперед" */}
 				<PageButton
 					$variant="secondary"
 					onClick={() => handlePageClick(currentPage + 1)}
@@ -206,7 +197,6 @@ const Pagination = ({
 					→
 				</PageButton>
 
-				{/* Выбор количества на странице */}
 				{showPageSize && (
 					<PageSizeSelect value={limit} onChange={handleLimitChange} title="Количество на странице">
 						{pageSizeOptions.map(option => (
@@ -219,6 +209,20 @@ const Pagination = ({
 			</PaginationControls>
 		</PaginationContainer>
 	);
+};
+
+Pagination.propTypes = {
+	currentPage: PropTypes.number.isRequired,
+	totalPages: PropTypes.number.isRequired,
+	totalCount: PropTypes.number.isRequired,
+	limit: PropTypes.number.isRequired,
+	onPageChange: PropTypes.func.isRequired,
+	onLimitChange: PropTypes.func,
+	showPageSize: PropTypes.bool,
+};
+
+Pagination.defaultProps = {
+	showPageSize: true,
 };
 
 export default Pagination;

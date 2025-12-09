@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { GlobalStyle } from './styles/GlobalStyles';
@@ -16,6 +15,7 @@ import EditTransaction from './pages/EditTransaction';
 import CategoryDetails from './pages/CategoryDetails';
 import Profile from './pages/Profile';
 import Accounts from './pages/Accounts';
+import styled from 'styled-components';
 
 const AppContainer = styled.div`
 	min-height: 100vh;
@@ -42,7 +42,7 @@ const LoadingSpinner = styled.div`
 
 function App() {
 	const dispatch = useDispatch();
-	const { isLoggedIn, loading } = useSelector(state => state.auth);
+	const { loading } = useSelector(state => state.auth);
 
 	useEffect(() => {
 		dispatch(getCurrentUser());
@@ -65,12 +65,10 @@ function App() {
 					{!loading && <Header />}
 					<MainContent $hasHeader={!loading}>
 						<Routes>
-							{/* Публичные маршруты */}
 							<Route path="/" element={<WelcomePage />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/register" element={<Register />} />
 
-							{/* Защищенные маршруты */}
 							<Route
 								path="/dashboard"
 								element={
@@ -136,7 +134,6 @@ function App() {
 								}
 							/>
 
-							{/* Fallback route */}
 							<Route path="*" element={<Navigate to="/" replace />} />
 						</Routes>
 					</MainContent>

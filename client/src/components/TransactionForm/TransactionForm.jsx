@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { LoadingButton } from '../UI/Button/Button';
 import { Input } from '../UI/Input/Input';
 import { useForm } from '../../hooks/useForm';
 import { transactionSchema } from '../../utils/validationSchemas';
+import styled from 'styled-components';
 
-// Styled components (перенесены из AddTransaction.jsx)
 const Form = styled.form`
 	display: flex;
 	flex-direction: column;
@@ -123,16 +123,13 @@ const TransactionForm = ({
 	const [transactionType, setTransactionType] = useState(initialValues?.type || 'expense');
 	const [formErrors, setFormErrors] = useState({});
 
-	// Фильтруем категории по типу транзакции
 	const filteredCategories = categories.filter(
 		category => category && category.type === transactionType
 	);
 
-	// Форматирование значения для формы
 	const formatInitialValues = values => {
 		if (!values) return null;
 
-		// Если дата в формате ISO (приходит с сервера)
 		if (values.date && values.date.includes('T')) {
 			const dateObj = new Date(values.date);
 			return {
@@ -154,20 +151,16 @@ const TransactionForm = ({
 		time: new Date().toTimeString().slice(0, 5),
 	};
 
-	// Инициализируем тип транзакции из initialValues
 	useEffect(() => {
 		if (initialValues?.type) {
 			setTransactionType(initialValues.type);
 		}
 	}, [initialValues]);
 
-	// Обработчик отправки формы с Yup-валидацией
 	const handleFormSubmit = async values => {
 		try {
-			// Валидация с Yup
 			await transactionSchema.validate(values, { abortEarly: false });
 
-			// Формируем данные для отправки
 			const transactionData = {
 				amount: parseFloat(values.amount),
 				type: transactionType,
@@ -198,7 +191,6 @@ const TransactionForm = ({
 		handleFormSubmit
 	);
 
-	// Форматирование суммы (только числа, 2 знака после запятой)
 	const handleAmountChange = value => {
 		const cleanedValue = value.replace(/[^\d.]/g, '');
 		const parts = cleanedValue.split('.');
@@ -209,21 +201,18 @@ const TransactionForm = ({
 		handleChange('amount', cleanedValue);
 	};
 
-	// Очищаем выбранную категорию при смене типа транзакции
 	useEffect(() => {
 		if (!isEditing) {
 			handleChange('categoryId', '');
 		}
 	}, [transactionType]);
 
-	// Объединяем ошибки из useForm и Yup
 	const allErrors = { ...errors, ...formErrors };
 
 	const isLoading = loading || accountsLoading || categoriesLoading;
 
 	return (
 		<Form onSubmit={handleSubmit}>
-			{/* Переключатель типа транзакции */}
 			<FormGroup>
 				<Label>Тип операции</Label>
 				<TypeToggle>
@@ -244,7 +233,6 @@ const TransactionForm = ({
 				</TypeToggle>
 			</FormGroup>
 
-			{/* Сумма */}
 			<FormGroup>
 				<Label htmlFor="amount">Сумма *</Label>
 				<Input
@@ -260,7 +248,6 @@ const TransactionForm = ({
 				{touched.amount && allErrors.amount && <ErrorMessage>{allErrors.amount}</ErrorMessage>}
 			</FormGroup>
 
-			{/* Счет */}
 			<FormGroup>
 				<Label htmlFor="accountId">Счет *</Label>
 				<Select
@@ -283,7 +270,6 @@ const TransactionForm = ({
 				)}
 			</FormGroup>
 
-			{/* Категория */}
 			<FormGroup>
 				<Label htmlFor="categoryId">Категория *</Label>
 				<Select
@@ -306,7 +292,6 @@ const TransactionForm = ({
 				)}
 			</FormGroup>
 
-			{/* Описание */}
 			<FormGroup>
 				<Label htmlFor="description">Описание</Label>
 				<TextArea
@@ -321,7 +306,6 @@ const TransactionForm = ({
 				{allErrors.description && <ErrorMessage>{allErrors.description}</ErrorMessage>}
 			</FormGroup>
 
-			{/* Дата и время */}
 			<DateTimeRow>
 				<FormGroup>
 					<Label htmlFor="date">Дата *</Label>
@@ -350,10 +334,8 @@ const TransactionForm = ({
 				</FormGroup>
 			</DateTimeRow>
 
-			{/* Общая ошибка */}
 			{allErrors.submit && <ErrorMessage>{allErrors.submit}</ErrorMessage>}
 
-			{/* Кнопка отправки */}
 			<LoadingButton
 				type="submit"
 				loading={isLoading}
@@ -363,7 +345,6 @@ const TransactionForm = ({
 				{submitText}
 			</LoadingButton>
 
-			{/* Сообщения о недоступности данных */}
 			{accounts.length === 0 && !accountsLoading && (
 				<ErrorMessage>
 					Для {isEditing ? 'редактирования' : 'добавления'} транзакции необходимо создать хотя бы
@@ -379,6 +360,14 @@ const TransactionForm = ({
 			)}
 		</Form>
 	);
+};
+
+TransactionForm.propTypes = {
+	initialValues: PropTypes.object,
+	onSubmit: PropTypes.func.isRequired,
+	submitText: PropTypes.string,
+	isEditing: PropTypes.bool,
+	loading: PropTypes.bool,
 };
 
 export default TransactionForm;

@@ -1,4 +1,3 @@
-// src/hooks/useTransactions.js - ФИНАЛЬНАЯ ВЕРСИЯ БЕЗ ЦИКЛОВ
 import { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useURLParams } from './useURLParams';
@@ -13,17 +12,14 @@ export const useTransactions = () => {
 
 	const { params: urlParams, updateParams: updateURLParams } = useURLParams();
 
-	// Флаги для предотвращения циклов
 	const isInitialized = useRef(false);
 	const isUpdatingFromUser = useRef(false);
 
-	// Функция для загрузки транзакций
 	const loadTransactions = useCallback(
 		(page = 1, customFilters = null, skipURLUpdate = false) => {
 			const activeFilters = customFilters || filters;
 			const { startDate, endDate } = getPeriodDates(activeFilters.period || 'month');
 
-			// Обновляем URL если это действие пользователя (не восстановление)
 			if (!skipURLUpdate) {
 				isUpdatingFromUser.current = true;
 				updateURLParams({
@@ -35,7 +31,6 @@ export const useTransactions = () => {
 					accounts: activeFilters.accounts?.length > 0 ? activeFilters.accounts : undefined,
 				});
 
-				// Сбрасываем флаг после обновления URL
 				setTimeout(() => {
 					isUpdatingFromUser.current = false;
 				}, 100);
@@ -56,12 +51,9 @@ export const useTransactions = () => {
 		[dispatch, filters, updateURLParams]
 	);
 
-	// [ВАЖНО] Восстановление из URL - только при монтировании
 	useEffect(() => {
-		// Пропускаем если уже инициализировали
 		if (isInitialized.current) return;
 
-		// Всегда берем из URL если есть, иначе дефолты
 		const urlType = urlParams.type || 'expense';
 		const urlPeriod = urlParams.period || 'month';
 		const urlPage = urlParams.page || 1;
@@ -78,10 +70,8 @@ export const useTransactions = () => {
 			accounts: urlParams.accounts || [],
 		};
 
-		// Устанавливаем фильтры
 		dispatch(setTransactionsFilters(initialFilters));
 
-		// Загружаем данные
 		dispatch(
 			fetchTransactions({
 				page: urlPage,
@@ -90,7 +80,6 @@ export const useTransactions = () => {
 			})
 		);
 
-		// Обновляем URL с правильными параметрами (на случай если их не было)
 		updateURLParams({
 			page: urlPage,
 			type: urlType,
@@ -98,9 +87,8 @@ export const useTransactions = () => {
 		});
 
 		isInitialized.current = true;
-	}, []); // ← ТОЛЬКО при монтировании!
+	}, []);
 
-	// Функция для изменения фильтров пользователем
 	const updateFilters = useCallback(
 		newFilters => {
 			dispatch(setTransactionsFilters(newFilters));
@@ -109,7 +97,6 @@ export const useTransactions = () => {
 		[dispatch, loadTransactions]
 	);
 
-	// Функция для изменения страницы
 	const changePage = useCallback(
 		page => {
 			loadTransactions(page, filters, false);

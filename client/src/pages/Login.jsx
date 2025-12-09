@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import { loginUser, clearError } from '../store/actions/authActions';
 import { Input } from '../components/UI/Input/Input';
 import { Button } from '../components/UI/Button/Button';
 import { loginSchema } from '../utils/validationSchemas';
+import styled from 'styled-components';
 
 const LoginContainer = styled.div`
 	min-height: 100vh;

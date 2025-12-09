@@ -1,4 +1,3 @@
-// src/pages/Accounts.jsx
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -116,7 +115,6 @@ const Accounts = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [modalError, setModalError] = useState('');
 
-	// Загружаем счета при монтировании
 	useEffect(() => {
 		dispatch(fetchAccounts());
 	}, [dispatch]);
@@ -163,25 +161,19 @@ const Accounts = () => {
 	};
 
 	const handleSubmitAccount = async formData => {
-		console.log('Accounts: handleSubmitAccount called', formData);
 		setIsSubmitting(true);
 		setModalError('');
 
 		try {
 			if (editingAccount) {
-				// Обновление существующего счета
-				console.log('Dispatching updateAccount...');
 				await dispatch(updateAccount(editingAccount._id, formData));
 				setIsModalOpen(false);
 				setEditingAccount(null);
 			} else {
-				// Создание нового счета
-				console.log('Dispatching createAccount...');
 				await dispatch(createAccount(formData));
 				setIsModalOpen(false);
 				setEditingAccount(null);
 			}
-
 		} catch (error) {
 			setModalError(error.message || 'Произошла ошибка');
 		} finally {
@@ -197,14 +189,11 @@ const Accounts = () => {
 		}
 	};
 
-
-	// Форматирование валюты
 	const formatCurrency = (amount, currency) => {
 		const symbol = getCurrencySymbol(currency);
 		return `${amount.toLocaleString('ru-RU')} ${symbol}`;
 	};
 
-	// Рассчет общего баланса
 	const calculateTotalBalance = () => {
 		if (!accounts || accounts.length === 0) return 0;
 
@@ -215,7 +204,6 @@ const Accounts = () => {
 
 	const totalBalance = calculateTotalBalance();
 	const userCurrency = user?.currency || 'RUB';
-	
 
 	return (
 		<PageContainer>
@@ -229,7 +217,6 @@ const Accounts = () => {
 
 			{error && <ErrorMessage>Ошибка загрузки: {error}</ErrorMessage>}
 
-			{/* Общий баланс */}
 			{accounts.length > 0 && (
 				<TotalBalance>
 					<TotalLabel>Общий баланс всех счетов</TotalLabel>
@@ -237,7 +224,6 @@ const Accounts = () => {
 				</TotalBalance>
 			)}
 
-			{/* Список счетов */}
 			{loading ? (
 				<LoadingContainer>
 					<Spinner />
@@ -264,7 +250,6 @@ const Accounts = () => {
 				</EmptyState>
 			)}
 
-			{/* Модальное окно для создания/редактирования */}
 			<Modal
 				isOpen={isModalOpen}
 				onClose={handleCloseModal}
