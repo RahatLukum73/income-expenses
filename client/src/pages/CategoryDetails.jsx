@@ -58,8 +58,8 @@ const CategoryIcon = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 32px;
-	color: white;
+	font-size: 12px;
+	color: ;
 `;
 
 const CategoryName = styled.h2`
@@ -303,7 +303,7 @@ const CategoryDetails = () => {
 			</Header>
 
 			<CategoryCard>
-				<CategoryIcon color={currentCategory.color}>{currentCategory.icon || '📊'}</CategoryIcon>
+				<CategoryIcon color={currentCategory.color}/>
 				<CategoryName>{currentCategory.name}</CategoryName>
 				<CategoryType>{currentCategory.type === 'income' ? 'Доходы' : 'Расходы'}</CategoryType>
 

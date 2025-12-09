@@ -89,6 +89,11 @@ const BurgerMenu = () => {
 		setIsOpen(false);
 		navigate('/accounts');
 	};
+	
+	const handleCategoriesClick = () => {
+		setIsOpen(false);
+		navigate('/categories');// - этот хэндлер я только добавил, он еще не работает
+	};
 
 	const handleAddTransactionClick = () => {
 		setIsOpen(false);
@@ -150,6 +155,7 @@ const BurgerMenu = () => {
 					<MenuContainer ref={menuRef}>
 						<MenuItem onClick={handleDashboardClick}>Главная</MenuItem>
 						<MenuItem onClick={handleAccountsClick}>Счета</MenuItem>
+						<MenuItem onClick={handleCategoriesClick}>Категории</MenuItem>{/*Мне нужно чтоб это приводило к списку категорий, где напротив каждой была суума расходов/доходов*/}
 						<MenuItem onClick={handleAddTransactionClick}>Добавить транзакцию</MenuItem>
 						<MenuItem onClick={handleProfileClick}>Профиль</MenuItem>
 						<MenuItem onClick={handleLogoutClick}>Выйти</MenuItem>

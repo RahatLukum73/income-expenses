@@ -29,14 +29,13 @@ export const fetchCategories = () => {
 		}
 	};
 };
-// Получение одной категории по ID
 export const fetchCategory = id => {
 	return async dispatch => {
 		dispatch({ type: FETCH_CATEGORY_START });
 
 		try {
 			const response = await get(`/categories/${id}`);
-			const normalizedCategory = normalizeCategory(response);
+			const normalizedCategory = normalizeCategory(response.category);
 			dispatch({
 				type: FETCH_CATEGORY_SUCCESS,
 				payload: normalizedCategory,

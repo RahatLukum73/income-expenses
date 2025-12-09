@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import AddTransaction from './pages/AddTransaction';
 import TransactionDetails from './pages/TransactionDetails';
 import EditTransaction from './pages/EditTransaction';
+import CategoriesPage from './pages/CategoriesPage';
 import CategoryDetails from './pages/CategoryDetails';
 import Profile from './pages/Profile';
 import Accounts from './pages/Accounts';
@@ -98,6 +99,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<EditTransaction />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/categories"
+								element={
+									<ProtectedRoute>
+										<CategoriesPage />
 									</ProtectedRoute>
 								}
 							/>
