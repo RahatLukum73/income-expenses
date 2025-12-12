@@ -8,17 +8,17 @@ import styled from 'styled-components';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ChartContainer = styled.div`
-	background: white;
+	background: #565656;
 	border-radius: 12px;
 	padding: 24px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 12px #222;
 	margin-bottom: 24px;
 	text-align: right;
 `;
 
 const ChartTitle = styled.h3`
 	margin: 0 0 20px 0;
-	color: #333;
+	color: #e1e1e1;
 	font-size: 18px;
 	font-weight: 600;
 	text-align: center;
@@ -69,6 +69,7 @@ const PieChart = ({ data, type, title, activeTab }) => {
 					padding: 20,
 					usePointStyle: true,
 					pointStyle: 'circle',
+					color: '#e1e1e1',
 					font: {
 						size: 12,
 						family: "'Inter', sans-serif",
@@ -88,6 +89,7 @@ const PieChart = ({ data, type, title, activeTab }) => {
 								pointStyle: datasets[0].pointStyle,
 								hidden: false,
 								index: i,
+								fontColor: '#e1e1e1',
 							};
 						});
 					},

@@ -11,7 +11,14 @@ const MultiSelectContainer = styled.div`
 const SelectButton = styled(Button)`
 	width: 100%;
 	justify-content: space-between;
-	text-align: left;
+	text-align: center;
+	background: #565656;
+	color: #e1e1e1;
+
+		&:hover {
+		box-shadow: 0 0 8px rgba(249, 255, 224, 0.5);
+		background: #565656;
+	}
 
 	&::after {
 		content: '▼';
@@ -26,7 +33,6 @@ const Dropdown = styled.div`
 	left: 0;
 	right: 0;
 	background: white;
-	border: 1px solid #dee2e6;
 	border-radius: 8px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	z-index: 1000;
@@ -42,10 +48,6 @@ const DropdownItem = styled.div`
 	align-items: center;
 	gap: 8px;
 	transition: background-color 0.2s;
-
-	&:hover {
-		background-color: #f8f9fa;
-	}
 
 	${props =>
 		props.$selected &&
@@ -132,7 +134,7 @@ const MultiSelect = ({
 
 	return (
 		<MultiSelectContainer ref={dropdownRef}>
-			<SelectButton onClick={handleToggle} $variant="secondary" type="button">
+			<SelectButton onClick={handleToggle} type="button">
 				<span>{buttonText}</span>
 				{selectedOptions.length > 0 && <SelectedCount>{selectedOptions.length}</SelectedCount>}
 			</SelectButton>

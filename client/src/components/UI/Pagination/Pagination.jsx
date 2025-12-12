@@ -14,7 +14,7 @@ const PaginationContainer = styled.div`
 
 const PaginationInfo = styled.div`
 	font-size: 14px;
-	color: #6c757d;
+	color: #e1e1e1;
 	text-align: center;
 `;
 
@@ -31,13 +31,13 @@ const PageButton = styled(Button)`
 	height: 40px;
 	padding: 0;
 	font-weight: ${props => (props.$active ? '600' : '400')};
-	background: ${props => (props.$active ? '#007bff' : 'white')};
-	color: ${props => (props.$active ? 'white' : '#007bff')};
-	border: 1px solid ${props => (props.$active ? '#007bff' : '#dee2e6')};
+	background: ${props => (props.$active ? '##7b7b7b' : '#e1e1e1')};
+	color: ${props => (props.$active ? 'white' : '##7b7b7b')};
+	border: 1px solid ${props => (props.$active ? '#e1e1e1' : '#dee2e6')};
 
 	&:hover:not(:disabled) {
-		background: ${props => (props.$active ? '#0056b3' : '#f8f9fa')};
-		border-color: ${props => (props.$active ? '#0056b3' : '#007bff')};
+		background: ${props => (props.$active ? '#353535' : '#f8f9fa')};
+		border-color: ${props => (props.$active ? '#e1e1e1' : '#565656')};
 	}
 
 	&:disabled {

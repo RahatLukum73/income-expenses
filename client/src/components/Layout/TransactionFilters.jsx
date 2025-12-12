@@ -1,44 +1,18 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Input } from '../UI/Input/Input';
 import MultiSelect from '../UI/MultiSelect/MultiSelect';
 import Chip from '../UI/Chip/Chip';
 import { Button } from '../UI/Button/Button';
+import { useDebounce } from '../../hooks/useDebounce';
 import styled from 'styled-components';
 
-const useDebounce = (callback, delay) => {
-	const timeoutRef = useRef(null);
-
-	const debouncedCallback = useCallback(
-		(...args) => {
-			if (timeoutRef.current) {
-				clearTimeout(timeoutRef.current);
-			}
-
-			timeoutRef.current = setTimeout(() => {
-				callback(...args);
-			}, delay);
-		},
-		[callback, delay]
-	);
-
-	useEffect(() => {
-		return () => {
-			if (timeoutRef.current) {
-				clearTimeout(timeoutRef.current);
-			}
-		};
-	}, []);
-
-	return debouncedCallback;
-};
-
 const FiltersContainer = styled.div`
-	background: white;
+	background: #353535;
 	border-radius: 12px;
 	padding: 20px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	margin-bottom: 24px;
+	box-shadow: 0 0 12px #222;
+	margin-bottom: 10px
 `;
 
 const FiltersHeader = styled.div`
@@ -50,13 +24,13 @@ const FiltersHeader = styled.div`
 
 const FiltersTitle = styled.h3`
 	margin: 0;
-	color: #333;
+	color: #b5b8b1;
 	font-size: 18px;
 	font-weight: 600;
 `;
 
 const FiltersCount = styled.span`
-	background: #007bff;
+	background: #565656;
 	color: white;
 	border-radius: 12px;
 	padding: 4px 12px;
@@ -79,7 +53,7 @@ const FilterGroup = styled.div`
 const FilterLabel = styled.label`
 	font-size: 14px;
 	font-weight: 500;
-	color: #495057;
+	color: #b5b8b1;
 `;
 
 const SelectedFilters = styled.div`
@@ -94,7 +68,7 @@ const SelectedFilters = styled.div`
 const ActionButtons = styled.div`
 	display: flex;
 	gap: 12px;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	margin-top: 16px;
 `;
 
@@ -117,7 +91,7 @@ const TransactionFilters = ({
 	onReset,
 	categories = [],
 	accounts = [],
-	transactionsCount = 0,
+	transactionsCount,
 }) => {
 	const [localSearch, setLocalSearch] = useState(filters.search || '');
 	const [localCategories, setLocalCategories] = useState(filters.categories || []);

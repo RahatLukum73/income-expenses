@@ -13,8 +13,8 @@ const IconOption = styled.button`
 	width: 48px;
 	height: 48px;
 	border-radius: 8px;
-	border: ${props => (props.$selected ? '2px solid #007bff' : '1px solid #e1e5e9')};
-	background: ${props => (props.$selected ? '#e7f3ff' : 'white')};
+	border: ${props => (props.$selected ? '2px solid #565656' : '1px solid #e1e5e9')};
+	background: ${props => (props.$selected ? '#e7f3ff' : '#7b7b7b')};
 	cursor: pointer;
 	display: flex;
 	align-items: center;

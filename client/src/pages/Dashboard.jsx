@@ -10,7 +10,7 @@ import { calculateChartData } from '../utils/chartHelpers';
 import { useTransactions } from '../hooks/useTransactions';
 import { Button } from '../components/UI/Button/Button';
 import { Spinner } from '../components/UI/Spinner/Spinner';
-import TransactionHistory from '../components/Layout/TransactionHistory'; // [ИЗМЕНЕНИЕ] Новый компонент
+import TransactionHistory from '../components/Layout/TransactionHistory';
 import TransactionFilters from '../components/Layout/TransactionFilters';
 import PieChart from '../components/Charts/PieChart';
 import { getCurrencySymbol } from '../utils/dateHelpers';
@@ -18,99 +18,80 @@ import { getCurrencySymbol } from '../utils/dateHelpers';
 const DashboardContainer = styled.div`
 	max-width: 800px;
 	margin: 0 auto;
-	padding: 20px;
-	padding-bottom: 100px;
-`;
-
-const BalanceCard = styled.div`
-	background: white;
-	border-radius: 12px;
-	padding: 32px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	margin-bottom: 24px;
-	text-align: center;
-`;
-
-const BalanceTitle = styled.h2`
-	font-size: 16px;
-	font-weight: 600;
-	color: #6c757d;
-	margin-bottom: 8px;
-`;
-
-const BalanceAmount = styled.div`
-	font-size: 48px;
-	font-weight: 700;
-	color: #333;
+	padding: 20px 0;
 `;
 
 const StatsContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 16px;
-	margin-bottom: 24px;
+	display: flex;
+	margin-bottom: 10px;
+	background: #353535;
+	border-radius: 12px;
+	box-shadow: 0 0 12px #222;
+	overflow: hidden;
 `;
 
 const StatCard = styled.div`
-	background: white;
-	border-radius: 12px;
-	padding: 20px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	text-align: center;
+	flex: 1;
+	padding: 16px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	transition: all 0.3s ease;
+	background: ${props => (props.$active ? props.$bgColor : 'transparent')};
+	min-height: 100%;
+	cursor: pointer;
+
+	&:first-child {
+		border-right: 1px solid #444;
+	}
 `;
 
-const StatTitle = styled.div`
-	font-size: 14px;
-	color: #6c757d;
-	margin-bottom: 8px;
+const ToggleButton = styled.button`
+	font-weight: ${props => (props.$active ? 700 : 300)};
+	color: ${props => (props.$active ? props.color : '#888')};
+	border: none;
+	background: none;
+	font-size: 20px;
+
+	&:hover {
+		background: none;
+		color: ${props => (props.$active ? props.color : '#aaa')};
+	}
 `;
 
 const StatAmount = styled.div`
 	font-size: 24px;
-	font-weight: 700;
-	color: ${props => props.color || '#333'};
-`;
-
-const ToggleContainer = styled.div`
-	display: flex;
-	background: #f8f9fa;
-	border-radius: 8px;
-	padding: 4px;
-	margin-bottom: 24px;
-`;
-
-const ToggleButton = styled(Button)`
-	flex: 1;
-	padding: 12px;
-	background: ${props => (props.$active ? '#007bff' : 'transparent')};
-	color: ${props => (props.$active ? 'white' : '#007bff')};
-	border: none;
-	font-weight: 600;
-
-	&:hover {
-		background: ${props => (props.$active ? '#0056b3' : '#e9ecef')};
-		color: ${props => (props.$active ? 'white' : '#0056b3')};
-	}
+	align-self: center;
+	font-weight: ${props => (props.$active ? 700 : 300)};
+	color: ${props => (props.$active ? props.color : '#666')};
+	transition: color 0.3s ease;
 `;
 
 const PeriodSelector = styled.div`
 	display: flex;
 	gap: 8px;
-	margin-bottom: 24px;
+	border-radius: 12px;
 	justify-content: space-between;
+	background: #565656;
+	padding: 12px 20px;
+	box-shadow: 0 0 12px #222;
+	margin-bottom: 10px;
 `;
 
 const PeriodButton = styled(Button)`
 	flex: 1;
-	padding: 8px 16px;
-	background: ${props => (props.$active ? '#007bff' : 'white')};
-	color: ${props => (props.$active ? 'white' : '#333')};
-	border: 2px solid #e1e5e9;
+	padding: 12px 16px;
+	box-shadow: ${props => (props.$active ? '0 0 8px rgba(249, 255, 224, 0.5)' : 'none')};
+	background: ${props => (props.$active ? '#565656' : 'none')};
+	color: ${props => (props.$active ? '#fff' : '#e1e1e1')};
+	border: none;
+	font-size: 20px;
 	font-weight: 500;
 
 	&:hover {
-		background: ${props => (props.$active ? '#0056b3' : '#f8f9fa')};
-		border-color: ${props => (props.$active ? '#0056b3' : '#007bff')};
+		background: none;
+		box-shadow: 0 0 8px rgba(249, 255, 224, 0.5);
 	}
 `;
 
@@ -257,37 +238,32 @@ const Dashboard = () => {
 		<DashboardContainer>
 			{error && <ErrorMessage>Ошибка загрузки данных: {error}</ErrorMessage>}
 
-			<BalanceCard>
-				<BalanceTitle>Общий баланс</BalanceTitle>
-				<BalanceAmount>
-					{summary?.totalBalance?.toLocaleString('ru-RU') || '0'} {currencySymbol}
-				</BalanceAmount>
-			</BalanceCard>
-
 			<StatsContainer>
-				<StatCard>
-					<StatTitle>Доходы</StatTitle>
-					<StatAmount color="#28a745">
+				<StatCard $active={activeTab === 'income'} $bgColor="rgba(40, 167, 69, 0.15)">
+					<ToggleButton
+						color="#28a745"
+						$active={activeTab === 'income'}
+						onClick={() => handleTabChange('income')}
+					>
+						ДОХОДЫ:
+					</ToggleButton>
+					<StatAmount color="#28a745" $active={activeTab === 'income'}>
 						+{totalIncome.toLocaleString('ru-RU')} {currencySymbol}
 					</StatAmount>
 				</StatCard>
-
-				<StatCard>
-					<StatTitle>Расходы</StatTitle>
-					<StatAmount color="#dc3545">
+				<StatCard $active={activeTab === 'expense'} $bgColor="rgba(220, 53, 69, 0.15)">
+					<ToggleButton
+						color="#dc3545"
+						$active={activeTab === 'expense'}
+						onClick={() => handleTabChange('expense')}
+					>
+						РАСХОДЫ:
+					</ToggleButton>
+					<StatAmount color="#dc3545" $active={activeTab === 'expense'}>
 						-{totalExpenses.toLocaleString('ru-RU')} {currencySymbol}
 					</StatAmount>
 				</StatCard>
 			</StatsContainer>
-
-			<ToggleContainer>
-				<ToggleButton $active={activeTab === 'expense'} onClick={() => handleTabChange('expense')}>
-					РАСХОДЫ
-				</ToggleButton>
-				<ToggleButton $active={activeTab === 'income'} onClick={() => handleTabChange('income')}>
-					ДОХОДЫ
-				</ToggleButton>
-			</ToggleContainer>
 
 			<PeriodSelector>
 				{periods.map(period => (
@@ -307,7 +283,7 @@ const Dashboard = () => {
 				onFiltersChange={handleFiltersChange}
 				categories={categories.filter(cat => cat.type === activeTab)}
 				accounts={accounts}
-				transactionsCount={transactionsArray.length}
+				transactionsCount={pagination.total}
 			/>
 
 			{chartData && chartData.length > 0 && (
@@ -335,16 +311,24 @@ const Dashboard = () => {
 	);
 };
 
-// PropTypes остаются без изменений
+// Обновленные PropTypes
 StatAmount.propTypes = {
 	color: PropTypes.string,
+	$active: PropTypes.bool,
 	children: PropTypes.node,
 };
 
 ToggleButton.propTypes = {
 	$active: PropTypes.bool,
+	color: PropTypes.string,
 	onClick: PropTypes.func,
 	children: PropTypes.node.isRequired,
+};
+
+StatCard.propTypes = {
+	$active: PropTypes.bool,
+	bgColor: PropTypes.string,
+	children: PropTypes.node,
 };
 
 PeriodButton.propTypes = {

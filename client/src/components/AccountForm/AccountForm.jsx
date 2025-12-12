@@ -40,20 +40,21 @@ const FormActions = styled.div`
 
 const CurrencySelect = styled.select`
 	padding: 12px 16px;
-	border: 1px solid #dee2e6;
+	border: 1px solid #e1e1e1;
 	border-radius: 8px;
 	font-size: 14px;
-	color: #333;
-	background: white;
+	color: #e1e1e1;
+	background: #7b7b7b;
 
 	&:focus {
 		outline: none;
-		border-color: #007bff;
+		border-color: #565656;
 		box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 	}
 `;
 
 const BalanceInput = styled(Input)`
+	color: #e1e1e1;
 	&::-webkit-outer-spin-button,
 	&::-webkit-inner-spin-button {
 		-webkit-appearance: none;

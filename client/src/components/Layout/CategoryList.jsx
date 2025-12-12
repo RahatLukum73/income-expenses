@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTransactions } from '../../hooks/useTransactions';
 
 const Container = styled.div`
-	background: white;
+	background: #565656;
 	border-radius: 12px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	overflow: hidden;
@@ -18,7 +18,7 @@ const CategoryItem = styled.div`
 	cursor: pointer;
 
 	&:hover {
-		background: #f8f9fa;
+		background: #b5b8b1;
 	}
 
 	&:last-child {
@@ -48,7 +48,7 @@ const CategoryHeader = styled.div`
 
 const CategoryName = styled.h3`
 	margin: 0;
-	color: #333;
+	color: #e1e1e1;
 	font-size: 16px;
 	font-weight: 600;
 `;

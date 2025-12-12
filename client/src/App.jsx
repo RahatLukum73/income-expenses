@@ -26,7 +26,6 @@ const AppContainer = styled.div`
 
 const MainContent = styled.main`
 	flex: 1;
-	padding: ${props => (props.$hasHeader ? '20px' : '0')};
 	max-width: 1200px;
 	margin: 0 auto;
 	width: 100%;

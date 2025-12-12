@@ -3,7 +3,7 @@ import { Button } from '../UI/Button/Button';
 import styled from 'styled-components';
 
 const Card = styled.div`
-	background: white;
+	background: #b5b8b1;
 	border-radius: 12px;
 	padding: 20px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -124,12 +124,12 @@ const CardActions = styled.div`
 const ActionButton = styled(Button)`
 	flex: 1;
 	font-size: 14px;
+	color: #e1e1e1;
 `;
 
 const DeleteButton = styled(ActionButton)`
 	background: #f8f9fa;
 	color: #dc3545;
-	border: 1px solid #dc3545;
 
 	&:hover:not(:disabled) {
 		background: #dc3545;
@@ -157,6 +157,7 @@ const DeleteButton = styled(ActionButton)`
 			margin-bottom: 4px;
 			opacity: 0;
 			transition: opacity 0.2s;
+			
 		}
 
 		&:hover::after {

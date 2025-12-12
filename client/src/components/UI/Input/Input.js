@@ -3,23 +3,21 @@ import styled from 'styled-components';
 export const Input = styled.input`
 	width: 100%;
 	padding: 12px 16px;
-	border: 2px solid #e1e5e9;
 	border-radius: 8px;
 	font-size: 16px;
 	transition: all 0.2s ease;
-	background: white;
+	background: #7b7b7b;
+	outline: none;
+	color: #e1e1e1;
+	border: none;
 
 	&:focus {
 		outline: none;
-		border-color: #007bff;
-		box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+		box-shadow: 0 0 6px rgba(249, 255, 224, 0.5);
 	}
 
 	&::placeholder {
-		color: #6c757d;
+		color: #e1e1e1;
 	}
 
-	&:invalid {
-		border-color: #dc3545;
-	}
 `;

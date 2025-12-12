@@ -31,7 +31,7 @@ const Header = styled.div`
 
 const Title = styled.h1`
 	margin: 0;
-	color: #333;
+	color: #e1e1e1;
 	font-size: 28px;
 `;
 
@@ -82,7 +82,7 @@ const ErrorMessage = styled.div`
 `;
 
 const TotalBalance = styled.div`
-	background: white;
+	background: #b5b8b1;
 	border-radius: 12px;
 	padding: 20px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -100,6 +100,10 @@ const TotalAmount = styled.div`
 	font-size: 32px;
 	font-weight: 700;
 	color: #333;
+`;
+
+const ButtonStyle = styled(Button)`
+	background: #444444;
 `;
 
 const Accounts = () => {
@@ -208,11 +212,11 @@ const Accounts = () => {
 	return (
 		<PageContainer>
 			<Header>
-				<Button $variant="secondary" onClick={handleBack} style={{ marginRight: '16px' }}>
-					← Назад
-				</Button>
+				<ButtonStyle onClick={handleBack} style={{ marginRight: '16px' }}>
+					←
+				</ButtonStyle>
 				<Title>Управление счетами</Title>
-				<Button onClick={handleCreateAccount}>+ Новый счет</Button>
+				<ButtonStyle onClick={handleCreateAccount}>+ Новый счет</ButtonStyle>
 			</Header>
 
 			{error && <ErrorMessage>Ошибка загрузки: {error}</ErrorMessage>}

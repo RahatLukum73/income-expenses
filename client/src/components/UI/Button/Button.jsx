@@ -23,9 +23,9 @@ const ButtonContent = styled.div`
 `;
 
 export const Button = styled.button`
-	background: ${props => (props.$variant === 'secondary' ? 'transparent' : '#007bff')};
-	color: ${props => (props.$variant === 'secondary' ? '#007bff' : 'white')};
-	border: ${props => (props.$variant === 'secondary' ? '2px solid #007bff' : 'none')};
+	background: #565656;
+	color: ${props => (props.$variant === 'secondary' ? '#7b7b7b' : 'white')};
+	border: none;
 	padding: 12px 24px;
 	border-radius: 8px;
 	font-size: 16px;
@@ -37,11 +37,11 @@ export const Button = styled.button`
 
 	&:hover {
 		background: ${props => {
-			if (props.disabled) return props.variant === 'secondary' ? 'transparent' : '#6c757d';
-			return props.variant === 'secondary' ? '#007bff' : '#0056b3';
+			if (props.disabled) return props.variant === 'secondary' ? '#7b7b7b' : 'white';
+			return props.variant === 'secondary' ? 'white' : '#7b7b7b';
 		}};
 		color: ${props => {
-			if (props.disabled) return props.variant === 'secondary' ? '#007bff' : 'white';
+			if (props.disabled) return props.variant === 'secondary' ? '#7b7b7b' : 'white';
 			return props.variant === 'secondary' ? 'white' : 'white';
 		}};
 		transform: ${props => (props.disabled ? 'none' : 'translateY(-1px)')};

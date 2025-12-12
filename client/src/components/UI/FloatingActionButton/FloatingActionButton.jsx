@@ -5,8 +5,8 @@ import styled from 'styled-components';
 const FloatingButton = styled(Link)`
 	width: 100px;
 	height: 100px;
-	background: #007bff;
-	color: white;
+	background: #bdbdbd;
+	color: #565656;
 	border: none;
 	border-radius: 50%;
 	font-size: 72px;
@@ -17,13 +17,11 @@ const FloatingButton = styled(Link)`
 	line-height: 85px;
 	margin: 20px;
 	cursor: pointer;
-	box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
 	transition: all 0.3s ease;
 
 	&:hover {
-		background: #0056b3;
 		transform: scale(1.1);
-		box-shadow: 0 6px 25px rgba(0, 123, 255, 0.4);
+		box-shadow: 0 6px 25px rgba(249, 255, 224, 0.5);
 	}
 
 	&:active {

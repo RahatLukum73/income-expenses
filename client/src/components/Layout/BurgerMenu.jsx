@@ -21,9 +21,9 @@ const BurgerButton = styled.button`
 `;
 
 const BurgerLine = styled.span`
-	width: 24px;
+	width: 30px;
 	height: 2px;
-	background: #333;
+	background: #BBBBBB;
 	transition: all 0.3s ease;
 `;
 
