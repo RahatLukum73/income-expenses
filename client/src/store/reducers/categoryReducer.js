@@ -31,6 +31,7 @@ export const categoryReducer = (state = initialState, action) => {
 				categories: action.payload,
 				error: null,
 			};
+			
 		case FETCH_CATEGORY_SUCCESS:
 			return {
 				...state,

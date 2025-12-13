@@ -17,34 +17,28 @@ import {
 	DELETE_TRANSACTION_FAIL,
 	CLEAR_CURRENT_TRANSACTION,
 	CLEAR_TRANSACTIONS_ERROR,
-	SET_TRANSACTIONS_FILTERS, // [ИЗМЕНЕНИЕ] Добавляем
+	SET_TRANSACTIONS_FILTERS,
 } from '../actionTypes';
 import { get, post, put, del } from '../../services/api';
 import { normalizeTransaction, normalizeTransactions } from '../../utils/normalizers';
 
-// [ИЗМЕНЕНИЕ] Action для установки фильтров
 export const setTransactionsFilters = filters => ({
 	type: SET_TRANSACTIONS_FILTERS,
 	payload: filters,
 });
-// [ИЗМЕНЕНИЕ] Модифицируем fetchTransactions для использования фильтров из state
 export const fetchTransactions = (params = {}) => {
 	return async (dispatch, getState) => {
-		// [ИЗМЕНЕНИЕ] Добавляем getState
 		dispatch({ type: FETCH_TRANSACTIONS_START });
 
 		try {
 			const queryParams = new URLSearchParams();
 
-			// [ИЗМЕНЕНИЕ] Базовые параметры пагинации
 			queryParams.append('page', params.page || 1);
 			queryParams.append('limit', params.limit || 50);
 
-			// [ИЗМЕНЕНИЕ] Берем фильтры из params или из state
 			const state = getState();
 			const filters = params.filters || state.transactions.filters;
 
-			// Добавляем фильтры в запрос
 			if (filters.type) queryParams.append('type', filters.type);
 			if (filters.startDate) queryParams.append('startDate', filters.startDate);
 			if (filters.endDate) queryParams.append('endDate', filters.endDate);
@@ -80,7 +74,6 @@ export const fetchTransactions = (params = {}) => {
 	};
 };
 
-// Получение одной транзакции по ID
 export const fetchTransaction = id => {
 	return async dispatch => {
 		dispatch({ type: FETCH_TRANSACTION_START });
@@ -88,7 +81,6 @@ export const fetchTransaction = id => {
 		try {
 			const response = await get(`/transactions/${id}`);
 
-			// Нормализуем данные
 			const normalizedTransaction = normalizeTransaction(response);
 
 			dispatch({
@@ -104,7 +96,6 @@ export const fetchTransaction = id => {
 	};
 };
 
-// Создание новой транзакции
 export const createTransaction = transactionData => {
 	return async dispatch => {
 		dispatch({ type: CREATE_TRANSACTION_START });
@@ -112,7 +103,6 @@ export const createTransaction = transactionData => {
 		try {
 			const response = await post('/transactions', transactionData);
 
-			// Нормализуем данные
 			const normalizedTransaction = normalizeTransaction(response);
 			dispatch({
 				type: CREATE_TRANSACTION_SUCCESS,
@@ -129,7 +119,6 @@ export const createTransaction = transactionData => {
 	};
 };
 
-// Обновление транзакции
 export const updateTransaction = (id, updateData) => {
 	return async dispatch => {
 		dispatch({ type: UPDATE_TRANSACTION_START });
@@ -137,7 +126,6 @@ export const updateTransaction = (id, updateData) => {
 		try {
 			const response = await put(`/transactions/${id}`, updateData);
 
-			// Нормализуем данные
 			const normalizedTransaction = normalizeTransaction(response);
 
 			dispatch({
@@ -156,7 +144,6 @@ export const updateTransaction = (id, updateData) => {
 	};
 };
 
-// Удаление транзакции
 export const deleteTransaction = id => {
 	return async dispatch => {
 		dispatch({ type: DELETE_TRANSACTION_START });
@@ -178,12 +165,10 @@ export const deleteTransaction = id => {
 	};
 };
 
-// Очистка текущей транзакции (для форм редактирования)
 export const clearCurrentTransaction = () => ({
 	type: CLEAR_CURRENT_TRANSACTION,
 });
 
-// Очистка ошибок транзакций
 export const clearTransactionsError = () => ({
 	type: CLEAR_TRANSACTIONS_ERROR,
 });
@@ -205,7 +190,6 @@ export const fetchTransactionsByCategory = (categoryId, params = {}) => {
 
 			const response = await get(endpoint);
 
-			// Нормализуем данные
 			const normalizedTransactions = normalizeTransactions(response);
 
 			dispatch({

@@ -77,3 +77,28 @@ LoadingButton.propTypes = {
 	onClick: PropTypes.func,
 	$variant: PropTypes.oneOf(['primary', 'secondary']),
 };
+
+// Новый компонент BackButton
+export const BackButton = ({ children, ...props }) => (
+	<Button 
+		{...props} 
+		style={{
+			background: '#adadad',
+			marginBottom: '24px',
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'center',
+			width: 'fit-content',
+			padding: '12px 16px'
+		}}
+	>
+		<i className="fas fa-arrow-left" style={{ marginRight: children ? '8px' : '0' }}></i>
+		{children}
+	</Button>
+);
+
+BackButton.propTypes = {
+	children: PropTypes.node,
+	onClick: PropTypes.func,
+	disabled: PropTypes.bool,
+};

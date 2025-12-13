@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Spinner } from '../components/UI/Spinner/Spinner';
 import CategoryList from '../components/Layout/CategoryList';
-import { Button } from '../components/UI/Button/Button';
+import { Button, BackButton } from '../components/UI/Button/Button';
 import { fetchCategories } from '../store/actions/categoryActions';
 
 const Container = styled.div`
@@ -23,35 +23,38 @@ const Header = styled.div`
 
 const Title = styled.h1`
 	margin: 0;
-	color: #333;
+	color: #e1e1e1;
 	font-size: 28px;
 	font-weight: 700;
 `;
 
 const ToggleContainer = styled.div`
 	display: flex;
-	background: #f8f9fa;
 	border-radius: 8px;
 	padding: 4px;
 	margin-bottom: 24px;
+	gap: 4px;
 `;
 
 const ToggleButton = styled(Button)`
 	flex: 1;
 	padding: 12px;
-	background: ${props => (props.$active ? '#007bff' : 'transparent')};
-	color: ${props => (props.$active ? 'white' : '#007bff')};
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 	border: none;
 	font-weight: 600;
+	transition: all 0.3s ease;
+
+	background: ${props =>
+		!props.$active ? '#adadad' : props.name === 'expense' ? '#dc3545' : '#28a745'};
+	color: ${props => (!props.$active ? 'white' : props.name === 'expense' ? '#8b0000' : '#006400')};
 
 	&:hover {
-		background: ${props => (props.$active ? '#0056b3' : '#e9ecef')};
-		color: ${props => (props.$active ? 'white' : '#0056b3')};
+		background: ${props =>
+			!props.$active ? '#8b8b8b' : props.name === 'expense' ? '#c82333' : '#218838'};
+		color: ${props =>
+			!props.$active ? 'white' : props.name === 'expense' ? '#660000' : '#004d00'};
+		transform: translateY(-1px);
 	}
-`;
-
-const BackButton = styled(Button)`
-	margin-bottom: 24px;
 `;
 
 const ErrorMessage = styled.div`
@@ -64,6 +67,7 @@ const ErrorMessage = styled.div`
 `;
 
 const CategoriesPage = () => {
+
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [activeTab, setActiveTab] = useState('expense');
@@ -73,22 +77,45 @@ const CategoriesPage = () => {
 		loading: categoriesLoading,
 		error: categoriesError,
 	} = useSelector(state => state.categories);
+	//=========================
+// 	useEffect(() => {
+// 		dispatch(fetchCategories());
+// 	}, [dispatch]);
+//=================================
+// 	useEffect(() => {
+//   console.log('CategoriesPage useEffect running');
+  
+//   //Защита: загружаем только если категорий ещё нет
+//   if (categories.length === 0) {
+//     console.log('Dispatching fetchCategories');
+//     dispatch(fetchCategories());
+//   } else {
+//     console.log('Categories already exist, skipping fetch');
+//   }
+// }, [dispatch, categories.length]);
+//=========================
+const filteredCategories = categories.filter(category => category.type === activeTab);
+const loading = categoriesLoading;
+const error = categoriesError;
 
-	useEffect(() => {
-		dispatch(fetchCategories());
-	}, [dispatch]);
+const [hasFetched, setHasFetched] = useState(false);
+
+useEffect(() => {
+  if (!hasFetched && categories.length === 0 && !loading && !error) {
+    console.log('Загрузка категорий...');
+    dispatch(fetchCategories());
+    setHasFetched(true);
+  }
+}, [dispatch, categories.length, hasFetched, loading, error]);
 
 	const handleBackClick = () => {
 		navigate('/dashboard');
 	};
 
 	const handleViewTransactions = categoryId => {
-		navigate(`/category/${categoryId}`);
+		navigate(`/categories/${categoryId}`);
 	};
 
-	const filteredCategories = categories.filter(category => category.type === activeTab);
-	const loading = categoriesLoading;
-	const error = categoriesError;
 
 	if (loading) {
 		return (
@@ -106,15 +133,22 @@ const CategoriesPage = () => {
 
 			{error && <ErrorMessage>Ошибка загрузки данных: {error}</ErrorMessage>}
 
-			<BackButton $variant="secondary" onClick={handleBackClick}>
-				← Назад
+			<BackButton onClick={handleBackClick}>
 			</BackButton>
 
 			<ToggleContainer>
-				<ToggleButton $active={activeTab === 'expense'} onClick={() => setActiveTab('expense')}>
+				<ToggleButton
+					name="expense"
+					$active={activeTab === 'expense'}
+					onClick={() => setActiveTab('expense')}
+				>
 					РАСХОДЫ
 				</ToggleButton>
-				<ToggleButton $active={activeTab === 'income'} onClick={() => setActiveTab('income')}>
+				<ToggleButton
+					name="income"
+					$active={activeTab === 'income'}
+					onClick={() => setActiveTab('income')}
+				>
 					ДОХОДЫ
 				</ToggleButton>
 			</ToggleContainer>

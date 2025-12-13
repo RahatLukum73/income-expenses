@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { LoadingButton, Button } from '../components/UI/Button/Button';
+import { LoadingButton, Button, BackButton } from '../components/UI/Button/Button';
 import { Input } from '../components/UI/Input/Input';
 import Modal from '../components/UI/Modal/Modal';
 import { updateUserProfile, changePassword } from '../store/actions/authActions';
@@ -16,24 +16,25 @@ const ProfileContainer = styled.div`
 
 const Header = styled.div`
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	align-items: start;
 	margin-bottom: 32px;
 `;
 
-const BackButton = styled.button`
-	background: none;
-	border: none;
-	font-size: 24px;
-	cursor: pointer;
-	margin-right: 16px;
-	color: #007bff;
-	padding: 4px;
-	border-radius: 4px;
+// const BackButton = styled.button`
+// 	background: none;
+// 	border: none;
+// 	font-size: 24px;
+// 	cursor: pointer;
+// 	margin-right: 16px;
+// 	color: #007bff;
+// 	padding: 4px;
+// 	border-radius: 4px;
 
-	&:hover {
-		background: rgba(0, 123, 255, 0.1);
-	}
-`;
+// 	&:hover {
+// 		background: rgba(0, 123, 255, 0.1);
+// 	}
+// `;
 
 const Title = styled.h1`
 	margin: 0;
@@ -217,7 +218,7 @@ const Profile = () => {
 		return (
 			<ProfileContainer>
 				<Header>
-					<BackButton onClick={() => navigate(-1)}>←</BackButton>
+					<BackButton onClick={() => navigate(-1)}></BackButton>
 					<Title>Профиль</Title>
 				</Header>
 				<div>Пользователь не найден</div>
@@ -228,7 +229,7 @@ const Profile = () => {
 	return (
 		<ProfileContainer>
 			<Header>
-				<BackButton onClick={() => navigate(-1)}>←</BackButton>
+				<BackButton onClick={() => navigate(-1)}></BackButton>
 				<Title>Профиль</Title>
 			</Header>
 

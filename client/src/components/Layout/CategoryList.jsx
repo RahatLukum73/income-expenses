@@ -5,64 +5,80 @@ import { useTransactions } from '../../hooks/useTransactions';
 const Container = styled.div`
 	background: #565656;
 	border-radius: 12px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	overflow: hidden;
+	padding: 24px;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+`;
+
+const SectionTitle = styled.h3`
+	margin: 0 0 20px 0;
+	color: #b5b8b1;
+	font-size: 18px;
+	font-weight: 600;
+`;
+
+const CategoryListWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 `;
 
 const CategoryItem = styled.div`
 	display: flex;
 	align-items: center;
-	padding: 20px;
-	border-bottom: 1px solid #e9ecef;
-	transition: background-color 0.2s ease;
+	justify-content: space-between;
+	padding: 8px 16px;
+	background: ${props => props.$bgColor || '#303030'};
+	border-radius: 8px;
 	cursor: pointer;
+	transition: all 0.2s ease;
 
 	&:hover {
-		background: #b5b8b1;
+		background: ${props => props.$bgColor === '#6b6b6b' ? '#7b7b7b' : '#bdbdbd'};
+		transform: translateY(-2px);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 	}
-
-	&:last-child {
-		border-bottom: none;
-	}
-`;
-
-const CategoryColor = styled.div`
-	width: 16px;
-	height: 16px;
-	border-radius: 50%;
-	background: ${props => props.color || '#007bff'};
-	margin-right: 16px;
-	flex-shrink: 0;
 `;
 
 const CategoryInfo = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 12px;
 	flex: 1;
 `;
 
-const CategoryHeader = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 4px;
+const CategoryColor = styled.div`
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: ${props => props.$color || '#007bff'};
 `;
 
-const CategoryName = styled.h3`
-	margin: 0;
+const CategoryName = styled.span`
+	font-weight: 500;
 	color: #e1e1e1;
+	text-shadow: 1px 1px 1px rgba(68, 68, 68, 0.3);
 	font-size: 16px;
+`;
+
+const CategoryDetails = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	flex: 1;
+`;
+
+const CategoryDescription = styled.span`
+	color: #e1e1e1;
+	text-shadow: 1px 1px 1px rgba(68, 68, 68, 0.3);
+	font-size: 12px;
+	margin-right: 12px;
+`;
+
+const CategoryAmount = styled.span`
 	font-weight: 600;
-`;
-
-const CategoryAmount = styled.div`
 	font-size: 16px;
-	font-weight: 700;
-	color: ${props => (props.type === 'income' ? '#28a745' : '#dc3545')};
-`;
-
-const CategoryDescription = styled.p`
-	margin: 0;
-	color: #6c757d;
-	font-size: 14px;
+	color: ${props => (props.$type === 'income' ? '#28a745' : '#dc3545')};
+	text-shadow: 1px 1px 1px rgba(68, 68, 68, 0.3);
 `;
 
 const NoDataMessage = styled.div`
@@ -86,6 +102,10 @@ const CategoryList = ({
 		return statItem ? statItem.amount : 0;
 	};
 
+	const getBackgroundColor = (index) => {
+		return index % 2 === 0 ? '#6b6b6b' : '#adadad';
+	};
+
 	if (!categories || categories.length === 0) {
 		return (
 			<Container>
@@ -98,30 +118,39 @@ const CategoryList = ({
 
 	return (
 		<Container>
-			{categories.map(category => {
-				const amount = getCategoryAmount(category._id);
+			<SectionTitle>
+				{type === 'income' ? 'Категории доходов' : 'Категории расходов'}
+				{` (${categories.length} всего)`}
+			</SectionTitle>
 
-				return (
-					<CategoryItem
-						key={category._id}
-						onClick={() => onViewTransactions && onViewTransactions(category._id)}
-					>
-						<CategoryColor color={category.color} />
+			<CategoryListWrapper>
+				{categories.map((category, index) => {
+					const amount = getCategoryAmount(category._id);
 
-						<CategoryInfo>
-							<CategoryHeader>
-								<CategoryName>{category.name}</CategoryName>
-								<CategoryAmount type={type}>
-									{type === 'income' ? '+' : '-'}
-									{amount.toLocaleString('ru-RU')} {currencySymbol}
-								</CategoryAmount>
-							</CategoryHeader>
-
-							<CategoryDescription>{category.description || 'Без описания'}</CategoryDescription>
-						</CategoryInfo>
-					</CategoryItem>
-				);
-			})}
+					return (
+						<CategoryItem
+							key={category._id}
+							onClick={() => onViewTransactions && onViewTransactions(category._id)}
+							$bgColor={getBackgroundColor(index)}
+						>
+							<CategoryInfo>
+								<CategoryColor $color={category.color} />
+								<CategoryDetails>
+									<CategoryName>{category.name}</CategoryName>
+									<CategoryDescription>
+										{category.description || 'Без описания'}
+									</CategoryDescription>
+								</CategoryDetails>
+							</CategoryInfo>
+							
+							<CategoryAmount $type={type}>
+								{type === 'income' ? '+' : '-'}
+								{amount.toLocaleString('ru-RU')} {currencySymbol}
+							</CategoryAmount>
+						</CategoryItem>
+					);
+				})}
+			</CategoryListWrapper>
 		</Container>
 	);
 };

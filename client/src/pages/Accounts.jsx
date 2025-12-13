@@ -8,7 +8,7 @@ import {
 	updateAccount,
 	deleteAccount,
 } from '../store/actions/accountActions';
-import { Button } from '../components/UI/Button/Button';
+import { Button, BackButton } from '../components/UI/Button/Button';
 import { Spinner } from '../components/UI/Spinner/Spinner';
 import AccountCard from '../components/AccountCard/AccountCard';
 import AccountForm from '../components/AccountForm/AccountForm';
@@ -18,8 +18,7 @@ import { getCurrencySymbol } from '../utils/dateHelpers';
 const PageContainer = styled.div`
 	max-width: 800px;
 	margin: 0 auto;
-	padding: 20px;
-	padding-bottom: 100px;
+	padding: 20px 0; /* ИЗМЕНЕНИЕ: было padding: 20px; padding-bottom: 100px; */
 `;
 
 const Header = styled.div`
@@ -27,12 +26,15 @@ const Header = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 32px;
+	padding: 0 20px; /* ИЗМЕНЕНИЕ: добавили горизонтальные отступы */
 `;
 
 const Title = styled.h1`
 	margin: 0;
 	color: #e1e1e1;
 	font-size: 28px;
+	flex: 1;
+	text-align: center;
 `;
 
 const AccountsGrid = styled.div`
@@ -40,6 +42,7 @@ const AccountsGrid = styled.div`
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 20px;
 	margin-bottom: 32px;
+	padding: 0 20px; /* ИЗМЕНЕНИЕ: добавили горизонтальные отступы */
 `;
 
 const EmptyState = styled.div`
@@ -70,6 +73,7 @@ const LoadingContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	min-height: 200px;
+	padding: 0 20px; /* ИЗМЕНЕНИЕ: добавили горизонтальные отступы */
 `;
 
 const ErrorMessage = styled.div`
@@ -79,31 +83,20 @@ const ErrorMessage = styled.div`
 	border-radius: 8px;
 	margin-bottom: 24px;
 	text-align: center;
-`;
-
-const TotalBalance = styled.div`
-	background: #b5b8b1;
-	border-radius: 12px;
-	padding: 20px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	margin-bottom: 24px;
-	text-align: center;
-`;
-
-const TotalLabel = styled.div`
-	font-size: 14px;
-	color: #6c757d;
-	margin-bottom: 8px;
-`;
-
-const TotalAmount = styled.div`
-	font-size: 32px;
-	font-weight: 700;
-	color: #333;
+	margin: 0 20px 24px 20px; /* ИЗМЕНЕНИЕ: добавили горизонтальные отступы */
 `;
 
 const ButtonStyle = styled(Button)`
-	background: #444444;
+	background: #adadad;
+	width: auto;
+	flex-shrink: 0;
+	white-space: nowrap;
+`;
+
+const CustomBackButton = styled(BackButton)`
+	margin-bottom: 0 !important;
+	flex-shrink: 0 !important;
+	margin-right: 16px;
 `;
 
 const Accounts = () => {
@@ -198,35 +191,15 @@ const Accounts = () => {
 		return `${amount.toLocaleString('ru-RU')} ${symbol}`;
 	};
 
-	const calculateTotalBalance = () => {
-		if (!accounts || accounts.length === 0) return 0;
-
-		return accounts.reduce((total, account) => {
-			return total + (account.balance || 0);
-		}, 0);
-	};
-
-	const totalBalance = calculateTotalBalance();
-	const userCurrency = user?.currency || 'RUB';
-
 	return (
 		<PageContainer>
 			<Header>
-				<ButtonStyle onClick={handleBack} style={{ marginRight: '16px' }}>
-					←
-				</ButtonStyle>
+				<CustomBackButton onClick={handleBack} />
 				<Title>Управление счетами</Title>
 				<ButtonStyle onClick={handleCreateAccount}>+ Новый счет</ButtonStyle>
 			</Header>
 
 			{error && <ErrorMessage>Ошибка загрузки: {error}</ErrorMessage>}
-
-			{accounts.length > 0 && (
-				<TotalBalance>
-					<TotalLabel>Общий баланс всех счетов</TotalLabel>
-					<TotalAmount>{formatCurrency(totalBalance, userCurrency)}</TotalAmount>
-				</TotalBalance>
-			)}
 
 			{loading ? (
 				<LoadingContainer>
