@@ -32,17 +32,19 @@ const PageButton = styled(Button)`
 	padding: 0;
 	font-weight: ${props => (props.$active ? '600' : '400')};
 	background: ${props => (props.$active ? '##7b7b7b' : '#e1e1e1')};
-	color: ${props => (props.$active ? 'white' : '##7b7b7b')};
+	color: ${props => (props.$active ? 'white' : '#353535')};
 	border: 1px solid ${props => (props.$active ? '#e1e1e1' : '#dee2e6')};
 
 	&:hover:not(:disabled) {
 		background: ${props => (props.$active ? '#353535' : '#f8f9fa')};
 		border-color: ${props => (props.$active ? '#e1e1e1' : '#565656')};
+		color: ${props => (props.$active ? 'white' : '#353535')};
 	}
 
 	&:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
+		color: #353535;
 	}
 `;
 

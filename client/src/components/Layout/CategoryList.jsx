@@ -33,7 +33,7 @@ const CategoryItem = styled.div`
 	transition: all 0.2s ease;
 
 	&:hover {
-		background: ${props => props.$bgColor === '#6b6b6b' ? '#7b7b7b' : '#bdbdbd'};
+		background: ${props => (props.$bgColor === '#6b6b6b' ? '#7b7b7b' : '#bdbdbd')};
 		transform: translateY(-2px);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 	}
@@ -97,12 +97,13 @@ const CategoryList = ({
 	const { stats } = useTransactions({ type });
 	const categoryStats = stats?.categoryStats || [];
 
+
 	const getCategoryAmount = categoryId => {
 		const statItem = categoryStats.find(item => item.categoryId === categoryId);
 		return statItem ? statItem.amount : 0;
 	};
 
-	const getBackgroundColor = (index) => {
+	const getBackgroundColor = index => {
 		return index % 2 === 0 ? '#6b6b6b' : '#adadad';
 	};
 
@@ -142,7 +143,7 @@ const CategoryList = ({
 									</CategoryDescription>
 								</CategoryDetails>
 							</CategoryInfo>
-							
+
 							<CategoryAmount $type={type}>
 								{type === 'income' ? '+' : '-'}
 								{amount.toLocaleString('ru-RU')} {currencySymbol}

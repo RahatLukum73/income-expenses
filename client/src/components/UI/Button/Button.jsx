@@ -24,7 +24,7 @@ const ButtonContent = styled.div`
 
 export const Button = styled.button`
 	background: #565656;
-	color: ${props => (props.$variant === 'secondary' ? '#7b7b7b' : 'white')};
+	color: ${props => (props.$variant === 'secondary' ? '#e1e1e1' : 'white')};
 	border: none;
 	padding: 12px 24px;
 	border-radius: 8px;
@@ -84,7 +84,6 @@ export const BackButton = ({ children, ...props }) => (
 		{...props} 
 		style={{
 			background: '#adadad',
-			marginBottom: '24px',
 			display: 'flex',
 			alignItems: 'center',
 			justifyContent: 'center',

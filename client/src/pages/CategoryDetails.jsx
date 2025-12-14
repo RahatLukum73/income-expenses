@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { BackButton } from '../components/UI/Button/Button';
 import { fetchCategory } from '../store/actions/categoryActions';
 import { fetchTransactionsByCategory } from '../store/actions/transactionActions';
 import { normalizeTransactions } from '../utils/normalizers';
 import styled from 'styled-components';
 
 const PageContainer = styled.div`
-	padding: 24px;
+	padding: 20px;
 	max-width: 800px;
 	margin: 0 auto;
 `;
@@ -15,36 +16,23 @@ const PageContainer = styled.div`
 const Header = styled.div`
 	display: flex;
 	align-items: center;
+	gap: 20px;
 	margin-bottom: 32px;
 `;
 
-const BackButton = styled.button`
-	background: none;
-	border: none;
-	font-size: 24px;
-	cursor: pointer;
-	margin-right: 16px;
-	color: #007bff;
-	padding: 4px;
-	border-radius: 4px;
-
-	&:hover {
-		background: rgba(0, 123, 255, 0.1);
-	}
-`;
-
 const Title = styled.h1`
-	margin: 0;
-	color: #333;
+	color: #e1e1e1;
 	font-size: 28px;
 	flex: 1;
 `;
 
 const CategoryCard = styled.div`
-	background: white;
+	display: flex;
+	justify-content: space-between;
+	background: #565656;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 	border-radius: 12px;
-	padding: 32px;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	padding:20px 40px;
 	margin-bottom: 24px;
 	text-align: center;
 `;
@@ -58,58 +46,50 @@ const CategoryIcon = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 12px;
-	color: ;
 `;
 
 const CategoryName = styled.h2`
-	margin: 0 0 8px 0;
-	color: #333;
+	color: #e1e1e1;
 	font-size: 24px;
 `;
 
 const CategoryType = styled.div`
 	font-size: 16px;
-	color: #6c757d;
-	margin-bottom: 16px;
-`;
-
-const CategoryInfo = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 16px;
-	margin-top: 24px;
+	color: #fff;
 `;
 
 const InfoItem = styled.div`
 	text-align: center;
-	padding: 16px;
-	background: #f8f9fa;
 	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-self: end;
+	height: 100%;
 `;
 
 const InfoLabel = styled.div`
 	font-size: 14px;
-	color: #6c757d;
+	color: #fff;
 	margin-bottom: 8px;
 `;
 
 const InfoValue = styled.div`
 	font-size: 20px;
 	font-weight: 700;
-	color: #333;
+	color: #e1e1e1;
 `;
 
 const TransactionsSection = styled.div`
-	background: white;
+	background: #565656;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 	border-radius: 12px;
 	padding: 24px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
 const SectionTitle = styled.h3`
 	margin: 0 0 20px 0;
-	color: #333;
+	color: #e1e1e1;
 	font-size: 18px;
 	font-weight: 600;
 `;
@@ -124,15 +104,15 @@ const TransactionItem = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	background: #6b6b6b;
 	padding: 16px;
 	border-radius: 8px;
-	border: 1px solid #e9ecef;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
 	&:hover {
-		background: #f8f9fa;
-		border-color: #007bff;
+		background: #7b7b7b;
+		box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 	}
 `;
 
@@ -145,7 +125,7 @@ const TransactionInfo = styled.div`
 
 const TransactionDescription = styled.span`
 	font-weight: 500;
-	color: #333;
+	color: #353535;
 	flex: 1;
 `;
 
@@ -156,9 +136,9 @@ const TransactionAmount = styled.span`
 `;
 
 const TransactionDate = styled.span`
-	color: #6c757d;
-	font-size: 14px;
-	margin-left: 12px;
+	color: #e1e1e1;
+	font-size: 12px;
+	margin-right: 16px;
 `;
 
 const NoDataMessage = styled.div`
@@ -263,7 +243,7 @@ const CategoryDetails = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={handleBack}>←</BackButton>
+					<BackButton onClick={handleBack} />
 					<Title>Детали категории</Title>
 				</Header>
 				<LoadingState>Загрузка...</LoadingState>
@@ -275,7 +255,7 @@ const CategoryDetails = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={handleBack}>←</BackButton>
+					<BackButton onClick={handleBack} />
 					<Title>Детали категории</Title>
 				</Header>
 				<ErrorState>Ошибка: {error}</ErrorState>
@@ -287,7 +267,7 @@ const CategoryDetails = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={handleBack}>←</BackButton>
+					<BackButton onClick={handleBack} />
 					<Title>Детали категории</Title>
 				</Header>
 				<ErrorState>Категория не найдена</ErrorState>
@@ -298,25 +278,24 @@ const CategoryDetails = () => {
 	return (
 		<PageContainer>
 			<Header>
-				<BackButton onClick={handleBack}>←</BackButton>
+				<BackButton onClick={handleBack} />
 				<Title>Детали категории</Title>
 			</Header>
 
 			<CategoryCard>
-				<CategoryIcon color={currentCategory.color}/>
-				<CategoryName>{currentCategory.name}</CategoryName>
-				<CategoryType>{currentCategory.type === 'income' ? 'Доходы' : 'Расходы'}</CategoryType>
-
-				<CategoryInfo>
 					<InfoItem>
 						<InfoLabel>Всего транзакций</InfoLabel>
 						<InfoValue>{transactionsCount}</InfoValue>
 					</InfoItem>
+				<InfoItem>
+					<CategoryIcon color={currentCategory.color} />
+					<CategoryType>{currentCategory.type === 'income' ? 'Доходы' : 'Расходы'}</CategoryType>
+					<CategoryName>{currentCategory.name}</CategoryName>
+				</InfoItem>
 					<InfoItem>
 						<InfoLabel>Общая сумма</InfoLabel>
 						<InfoValue>{formatAmount(Math.abs(totalAmount), currentCategory.type)}</InfoValue>
 					</InfoItem>
-				</CategoryInfo>
 			</CategoryCard>
 
 			<TransactionsSection>

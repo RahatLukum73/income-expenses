@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { LoadingButton } from '../components/UI/Button/Button';
+import { LoadingButton, BackButton } from '../components/UI/Button/Button';
 import Modal from '../components/UI/Modal/Modal';
 import { fetchTransaction, deleteTransaction } from '../store/actions/transactionActions';
 import styled from 'styled-components';
@@ -16,26 +16,12 @@ const Header = styled.div`
 	display: flex;
 	align-items: center;
 	margin-bottom: 32px;
-`;
-
-const BackButton = styled.button`
-	background: none;
-	border: none;
-	font-size: 24px;
-	cursor: pointer;
-	margin-right: 16px;
-	color: #007bff;
-	padding: 4px;
-	border-radius: 4px;
-
-	&:hover {
-		background: rgba(0, 123, 255, 0.1);
-	}
+	gap: 20px;
 `;
 
 const Title = styled.h1`
 	margin: 0;
-	color: #333;
+	color: #e1e1e1;
 	font-size: 28px;
 	flex: 1;
 `;
@@ -43,12 +29,13 @@ const Title = styled.h1`
 const ActionButtons = styled.div`
 	display: flex;
 	gap: 12px;
+	margin: 20px 0 0 0;
 `;
 
 const DetailsCard = styled.div`
-	background: white;
+	background: #b5b8b1;
 	border-radius: 12px;
-	padding: 32px;
+	padding: 16px 32px;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 	margin-bottom: 24px;
 `;
@@ -204,7 +191,7 @@ const TransactionDetails = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={() => navigate(-1)}>←</BackButton>
+					<BackButton onClick={() => navigate(-1)}/>
 					<Title>Детали транзакции</Title>
 				</Header>
 				<LoadingState>Загрузка...</LoadingState>
@@ -216,7 +203,7 @@ const TransactionDetails = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={() => navigate(-1)}>←</BackButton>
+					<BackButton onClick={() => navigate(-1)}/>
 					<Title>Детали транзакции</Title>
 				</Header>
 				<ErrorState>Ошибка: {error}</ErrorState>
@@ -228,7 +215,7 @@ const TransactionDetails = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={() => navigate(-1)}>←</BackButton>
+					<BackButton onClick={() => navigate(-1)}/>
 					<Title>Детали транзакции</Title>
 				</Header>
 				<ErrorState>Транзакция не найдена</ErrorState>
@@ -239,16 +226,9 @@ const TransactionDetails = () => {
 	return (
 		<PageContainer>
 			<Header>
-				<BackButton onClick={() => navigate(-1)}>←</BackButton>
+				<BackButton onClick={() => navigate(-1)}/>
 				<Title>Детали транзакции</Title>
-				<ActionButtons>
-					<LoadingButton $variant="secondary" onClick={handleEdit}>
-						Редактировать
-					</LoadingButton>
-					<LoadingButton onClick={handleDelete} loading={loading}>
-						Удалить
-					</LoadingButton>
-				</ActionButtons>
+
 			</Header>
 
 			<DetailsCard>
@@ -287,6 +267,14 @@ const TransactionDetails = () => {
 						{currentTransaction.description || 'Описание отсутствует'}
 					</Description>
 				</DetailRow>
+								<ActionButtons>
+					<LoadingButton $variant="secondary" onClick={handleEdit}>
+						Редактировать
+					</LoadingButton>
+					<LoadingButton onClick={handleDelete} loading={loading}>
+						Удалить
+					</LoadingButton>
+				</ActionButtons>
 			</DetailsCard>
 
 			<Modal isOpen={showDeleteModal} onClose={cancelDelete} title="Подтверждение удаления">

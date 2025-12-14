@@ -16,34 +16,18 @@ const ProfileContainer = styled.div`
 
 const Header = styled.div`
 	display: flex;
-	flex-direction: column;
 	align-items: start;
 	margin-bottom: 32px;
 `;
 
-// const BackButton = styled.button`
-// 	background: none;
-// 	border: none;
-// 	font-size: 24px;
-// 	cursor: pointer;
-// 	margin-right: 16px;
-// 	color: #007bff;
-// 	padding: 4px;
-// 	border-radius: 4px;
-
-// 	&:hover {
-// 		background: rgba(0, 123, 255, 0.1);
-// 	}
-// `;
-
 const Title = styled.h1`
-	margin: 0;
-	color: #333;
+	margin: 0 0 0 20px;
+	color: #e1e1e1;
 	font-size: 28px;
 `;
 
 const ProfileCard = styled.div`
-	background: white;
+	background: #b5b8b1;
 	border-radius: 12px;
 	padding: 32px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -76,8 +60,8 @@ const FieldValue = styled.div`
 
 const FieldRow = styled.div`
 	display: flex;
+	justify-content: space-between;
 	align-items: center;
-	gap: 16px;
 `;
 
 const FieldInput = styled(Input)`
@@ -87,6 +71,19 @@ const FieldInput = styled(Input)`
 const ActionButton = styled(Button)`
 	min-width: 100px;
 `;
+
+const StyledSelect = styled.select`
+	width: 100%;
+	padding: 12px 16px;
+	border-radius: 8px;
+	font-size: 16px;
+	background: #7b7b7b;
+	outline: none;
+	border: none;
+	&:focus {
+		box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+	}
+`
 
 const ErrorMessage = styled.div`
 	color: #dc3545;
@@ -302,24 +299,16 @@ const Profile = () => {
 				<FieldGroup>
 					<FieldLabel>Валюта</FieldLabel>
 					<FieldRow>
-						<select
+						<StyledSelect
 							value={currency}
 							onChange={e => handleCurrencyChange(e.target.value)}
-							style={{
-								width: '100%',
-								padding: '12px 16px',
-								border: '2px solid #e1e5e9',
-								borderRadius: '8px',
-								fontSize: '16px',
-								background: 'white',
-							}}
 						>
 							{currencyOptions.map(option => (
 								<option key={option.value} value={option.value}>
 									{option.label}
 								</option>
 							))}
-						</select>
+						</StyledSelect>
 					</FieldRow>
 				</FieldGroup>
 

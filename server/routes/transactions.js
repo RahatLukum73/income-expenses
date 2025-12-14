@@ -1,4 +1,3 @@
-// routes/transactions.js
 const express = require('express');
 const auth = require('../middlewares/auth');
 const {

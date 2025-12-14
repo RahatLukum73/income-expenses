@@ -16,7 +16,7 @@ const Container = styled.div`
 
 const Header = styled.div`
 	display: flex;
-	justify-content: space-between;
+	gap: 20px;
 	align-items: center;
 	margin-bottom: 32px;
 `;
@@ -67,46 +67,30 @@ const ErrorMessage = styled.div`
 `;
 
 const CategoriesPage = () => {
-
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const [activeTab, setActiveTab] = useState('expense');
-
+	const [activeTab, setActiveTab] = useState(() => {
+		const savedTab = localStorage.getItem('categories_active_tab');
+		return savedTab === 'income' ? 'income' : 'expense';
+	});
+	useEffect(() => {
+		localStorage.setItem('categories_active_tab', activeTab);
+	}, [activeTab]);
 	const {
 		categories,
 		loading: categoriesLoading,
 		error: categoriesError,
 	} = useSelector(state => state.categories);
-	//=========================
-// 	useEffect(() => {
-// 		dispatch(fetchCategories());
-// 	}, [dispatch]);
-//=================================
-// 	useEffect(() => {
-//   console.log('CategoriesPage useEffect running');
-  
-//   //Защита: загружаем только если категорий ещё нет
-//   if (categories.length === 0) {
-//     console.log('Dispatching fetchCategories');
-//     dispatch(fetchCategories());
-//   } else {
-//     console.log('Categories already exist, skipping fetch');
-//   }
-// }, [dispatch, categories.length]);
-//=========================
-const filteredCategories = categories.filter(category => category.type === activeTab);
-const loading = categoriesLoading;
-const error = categoriesError;
 
-const [hasFetched, setHasFetched] = useState(false);
+	const filteredCategories = categories.filter(category => category.type === activeTab);
+	const loading = categoriesLoading;
+	const error = categoriesError;
 
-useEffect(() => {
-  if (!hasFetched && categories.length === 0 && !loading && !error) {
-    console.log('Загрузка категорий...');
-    dispatch(fetchCategories());
-    setHasFetched(true);
-  }
-}, [dispatch, categories.length, hasFetched, loading, error]);
+	useEffect(() => {
+		if (!loading && !error) {
+			dispatch(fetchCategories());
+		}
+	}, [dispatch]);
 
 	const handleBackClick = () => {
 		navigate('/dashboard');
@@ -115,7 +99,6 @@ useEffect(() => {
 	const handleViewTransactions = categoryId => {
 		navigate(`/categories/${categoryId}`);
 	};
-
 
 	if (loading) {
 		return (
@@ -128,13 +111,11 @@ useEffect(() => {
 	return (
 		<Container>
 			<Header>
+				<BackButton onClick={handleBackClick} />
 				<Title>Категории</Title>
 			</Header>
 
 			{error && <ErrorMessage>Ошибка загрузки данных: {error}</ErrorMessage>}
-
-			<BackButton onClick={handleBackClick}>
-			</BackButton>
 
 			<ToggleContainer>
 				<ToggleButton

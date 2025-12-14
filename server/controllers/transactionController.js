@@ -81,7 +81,6 @@ const getAllTransactions = async (req, res) => {
 			},
 			{ $sort: { total: -1 } },
 		]);
-
 		// Получаем информацию о категориях для диаграммы
 		const categoriesWithStats = await Promise.all(
 			categoryStats.map(async stat => {

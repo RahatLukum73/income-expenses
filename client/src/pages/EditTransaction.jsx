@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { BackButton } from '../components/UI/Button/Button';
 import TransactionForm from '../components/TransactionForm/TransactionForm';
 import { fetchTransaction, updateTransaction } from '../store/actions/transactionActions';
 import { fetchAccounts } from '../store/actions/accountActions';
@@ -20,24 +21,9 @@ const Header = styled.div`
 	margin-bottom: 32px;
 `;
 
-const BackButton = styled.button`
-	background: none;
-	border: none;
-	font-size: 24px;
-	cursor: pointer;
-	margin-right: 16px;
-	color: #007bff;
-	padding: 4px;
-	border-radius: 4px;
-
-	&:hover {
-		background: rgba(0, 123, 255, 0.1);
-	}
-`;
-
 const Title = styled.h1`
-	margin: 0;
-	color: #333;
+	margin: 0 0 0 20px;
+	color: #e1e1e1;
 	font-size: 28px;
 `;
 
@@ -102,7 +88,7 @@ const EditTransaction = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={handleBack}>←</BackButton>
+					<BackButton onClick={handleBack}/>
 					<Title>Редактировать транзакцию</Title>
 				</Header>
 				<LoadingState>Загрузка...</LoadingState>
@@ -114,7 +100,7 @@ const EditTransaction = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={handleBack}>←</BackButton>
+					<BackButton onClick={handleBack}/>
 					<Title>Редактировать транзакцию</Title>
 				</Header>
 				<ErrorState>Ошибка: {error}</ErrorState>
@@ -126,7 +112,7 @@ const EditTransaction = () => {
 		return (
 			<PageContainer>
 				<Header>
-					<BackButton onClick={handleBack}>←</BackButton>
+					<BackButton onClick={handleBack}/>
 					<Title>Редактировать транзакцию</Title>
 				</Header>
 				<ErrorState>Транзакция не найдена</ErrorState>
@@ -137,7 +123,7 @@ const EditTransaction = () => {
 	return (
 		<PageContainer>
 			<Header>
-				<BackButton onClick={handleBack}>←</BackButton>
+				<BackButton onClick={handleBack}/>
 				<Title>Редактировать транзакцию</Title>
 			</Header>
 

@@ -41,31 +41,33 @@ const MenuContainer = styled.div`
 	position: fixed;
 	top: 70px;
 	right: 20px;
-	background: white;
+	background: #7d7d7d;
 	border-radius: 8px;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-	min-width: 200px;
+	max-width: 600px;
 	overflow: hidden;
 	z-index: 1001;
 `;
 
 const MenuItem = styled.button`
 	width: 100%;
+	margin-right: 20px;
 	padding: 16px 20px;
 	background: none;
 	border: none;
 	text-align: left;
 	cursor: pointer;
 	font-size: 16px;
-	color: #333;
+	color: #e1e1e1;
 	transition: background-color 0.2s ease;
 
 	&:hover {
-		background: #f8f9fa;
+		background: #b5b8b1;
+		color: #565656;
 	}
 
 	&:not(:last-child) {
-		border-bottom: 1px solid #e1e5e9;
+		border-bottom: 1px solid #565656;
 	}
 `;
 

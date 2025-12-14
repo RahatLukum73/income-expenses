@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { LoadingButton } from '../UI/Button/Button';
+import { LoadingButton, Button } from '../UI/Button/Button';
 import { Input } from '../UI/Input/Input';
 import { useForm } from '../../hooks/useForm';
 import { transactionSchema } from '../../utils/validationSchemas';
@@ -11,6 +11,9 @@ const Form = styled.form`
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
+	padding: 20px;
+	background: #b5b8b1;
+	border-radius: 10px;
 `;
 
 const FormGroup = styled.div`
@@ -33,51 +36,65 @@ const ErrorMessage = styled.span`
 
 const TypeToggle = styled.div`
 	display: flex;
-	border: 2px solid #e1e5e9;
-	border-radius: 8px;
-	overflow: hidden;
-	background: white;
+	gap: 10px;
 `;
 
-const TypeButton = styled.button`
+const ToggleButton = styled(Button)`
 	flex: 1;
-	padding: 12px 16px;
+	padding: 12px;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 	border: none;
-	background: ${props => (props.$active ? '#007bff' : 'transparent')};
-	color: ${props => (props.$active ? 'white' : '#6c757d')};
 	font-weight: 600;
-	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all 0.3s ease;
+
+	background: ${props => {
+		if (!props.$active) return '#adadad';
+		return props.$type === 'expense' ? '#dc3545' : '#28a745';
+	}};
+
+	color: ${props => {
+		if (!props.$active) return 'white';
+		return props.$type === 'expense' ? '#ffebee' : '#e8f5e9';
+	}};
 
 	&:hover {
-		background: ${props => (props.$active ? '#0056b3' : '#f8f9fa')};
+		background: ${props => {
+			if (!props.$active) return '#8b8b8b';
+			return props.$type === 'expense' ? '#c82333' : '#218838';
+		}};
+
+		color: ${props => {
+			if (!props.$active) return 'white';
+			return props.$type === 'expense' ? '#ffcdd2' : '#c8e6c9';
+		}};
+		transform: translateY(-1px);
 	}
 `;
 
 const Select = styled.select`
 	width: 100%;
 	padding: 12px 16px;
-	border: 2px solid #e1e5e9;
 	border-radius: 8px;
 	font-size: 16px;
-	background: white;
+	background: #7b7b7b;
+	color: #e1e1e1;
 	transition: all 0.2s ease;
 
 	&:focus {
 		outline: none;
-		border-color: #007bff;
-		box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+		box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 	}
 
 	&:invalid {
-		border-color: #dc3545;
+		border-color: #565656;
 	}
 `;
 
 const TextArea = styled.textarea`
 	width: 100%;
+	background: #7b7b7b;
+	color: #e1e1e1;
 	padding: 12px 16px;
-	border: 2px solid #e1e5e9;
 	border-radius: 8px;
 	font-size: 16px;
 	transition: all 0.2s ease;
@@ -85,10 +102,15 @@ const TextArea = styled.textarea`
 	min-height: 100px;
 	font-family: inherit;
 
+	&::placeholder {
+		color: #cccccc;
+		opacity: 1;
+		font-style: italic;
+	}
+
 	&:focus {
 		outline: none;
-		border-color: #007bff;
-		box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+		box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 	}
 `;
 
@@ -216,20 +238,22 @@ const TransactionForm = ({
 			<FormGroup>
 				<Label>Тип операции</Label>
 				<TypeToggle>
-					<TypeButton
+					<ToggleButton
 						type="button"
 						$active={transactionType === 'expense'}
+						$type="expense"
 						onClick={() => setTransactionType('expense')}
 					>
 						Расходы
-					</TypeButton>
-					<TypeButton
+					</ToggleButton>
+					<ToggleButton
 						type="button"
 						$active={transactionType === 'income'}
+						$type="income"
 						onClick={() => setTransactionType('income')}
 					>
 						Доходы
-					</TypeButton>
+					</ToggleButton>
 				</TypeToggle>
 			</FormGroup>
 
@@ -316,6 +340,7 @@ const TransactionForm = ({
 						value={values.date}
 						onChange={e => handleChange('date', e.target.value)}
 						onBlur={() => handleBlur('date')}
+						style={{color: '#111'}}
 						required
 					/>
 				</FormGroup>
@@ -329,6 +354,7 @@ const TransactionForm = ({
 						value={values.time}
 						onChange={e => handleChange('time', e.target.value)}
 						onBlur={() => handleBlur('time')}
+						style={{color: '#111'}}
 						required
 					/>
 				</FormGroup>
