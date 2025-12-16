@@ -38,7 +38,7 @@ export const Button = styled.button`
 	&:hover {
 		background: ${props => {
 			if (props.disabled) return props.variant === 'secondary' ? '#7b7b7b' : 'white';
-			return props.variant === 'secondary' ? 'white' : '#7b7b7b';
+			return props.variant === 'secondary' ? '#7b7b7b' : '#7b7b7b';
 		}};
 		color: ${props => {
 			if (props.disabled) return props.variant === 'secondary' ? '#7b7b7b' : 'white';

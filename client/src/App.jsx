@@ -42,7 +42,7 @@ const LoadingSpinner = styled.div`
 
 function App() {
 	const dispatch = useDispatch();
-	const { loading } = useSelector(state => state.auth);
+	const { loading, user } = useSelector(state => state.auth);
 
 	useEffect(() => {
 		dispatch(getCurrentUser());
@@ -62,8 +62,8 @@ function App() {
 			<GlobalStyle />
 			<Router>
 				<AppContainer>
-					{!loading && <Header />}
-					<MainContent $hasHeader={!loading}>
+					{user && <Header />}
+					<MainContent $hasHeader={!!user}>
 						<Routes>
 							<Route path="/" element={<WelcomePage />} />
 							<Route path="/login" element={<Login />} />

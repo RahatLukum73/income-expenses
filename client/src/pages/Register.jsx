@@ -12,15 +12,15 @@ const RegisterContainer = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	background: linear-gradient(135deg, #111 0%, #555 100%);
 	padding: 20px;
 `;
 
 const RegisterCard = styled.div`
-	background: white;
+	background: #b5b8b1;
 	padding: 40px;
 	border-radius: 16px;
-	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 	width: 100%;
 	max-width: 440px;
 `;
@@ -31,11 +31,12 @@ const Logo = styled.div`
 `;
 
 const LogoBadge = styled.span`
-	background: #007bff;
+	background: #a13dd5;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 	color: white;
 	width: 60px;
 	height: 60px;
-	border-radius: 12px;
+	border-radius: 50%;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -204,7 +205,7 @@ const Register = () => {
 		<RegisterContainer>
 			<RegisterCard>
 				<Logo>
-					<LogoBadge>ОР</LogoBadge>
+					<LogoBadge>💰</LogoBadge>
 					<Title>Создать аккаунт</Title>
 					<Subtitle>Заполните данные для регистрации</Subtitle>
 				</Logo>
