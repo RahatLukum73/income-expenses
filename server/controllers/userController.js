@@ -1,6 +1,5 @@
 const User = require('../models/User');
 
-// Получить данные текущего пользователя
 const getCurrentUser = async (req, res) => {
 	try {
 		res.json({ error: null, user: req.user });
@@ -9,7 +8,6 @@ const getCurrentUser = async (req, res) => {
 	}
 };
 
-// Обновить профиль
 const updateProfile = async (req, res) => {
 	try {
 		const { name, currency } = req.body;
@@ -29,7 +27,6 @@ const updateProfile = async (req, res) => {
 	}
 };
 
-// Изменить валюту
 const changeCurrency = async (req, res) => {
 	try {
 		const { currency } = req.body;
@@ -50,7 +47,6 @@ const changeCurrency = async (req, res) => {
 	}
 };
 
-// Изменить пароль
 const changePassword = async (req, res) => {
 	try {
 		const { currentPassword, newPassword } = req.body;

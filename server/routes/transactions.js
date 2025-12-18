@@ -13,7 +13,6 @@ const {
 
 const router = express.Router();
 
-// Все роуты требуют аутентификации
 router.use(auth);
 
 router.get('/', getAllTransactions);

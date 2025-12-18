@@ -44,10 +44,8 @@ const transactionSchema = new mongoose.Schema(
 	},
 );
 
-// Составной индекс для быстрого поиска транзакций пользователя
 transactionSchema.index({ userId: 1, date: -1 });
 
-// Middleware: обновление баланса счета при создании/обновлении/удалении транзакции
 transactionSchema.post('save', async function () {
 	await updateAccountBalance(this.accountId);
 	await updateTransactionCount(this.accountId);
@@ -60,7 +58,6 @@ transactionSchema.post('findOneAndDelete', async function (doc) {
 	}
 });
 
-// Функция для пересчета баланса счета
 async function updateAccountBalance(accountId) {
 	const Transaction = mongoose.model('Transaction');
 	const Account = mongoose.model('Account');
@@ -88,7 +85,6 @@ async function updateAccountBalance(accountId) {
 	await Account.findByIdAndUpdate(accountId, { balance });
 }
 
-// Функция для обновления счетчика транзакций
 async function updateTransactionCount(accountId) {
 	const Transaction = mongoose.model('Transaction');
 	const Account = mongoose.model('Account');
@@ -100,7 +96,6 @@ async function updateTransactionCount(accountId) {
 	await Account.findByIdAndUpdate(accountId, { transactionCount });
 }
 
-// Валидация: проверка существования связанных документов
 transactionSchema.pre('save', async function (next) {
 	const [user, account, category] = await Promise.all([
 		mongoose.model('User').findById(this.userId),

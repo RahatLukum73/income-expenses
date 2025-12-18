@@ -1,5 +1,14 @@
+.dockerignore
+Dockerfile
+docker-compose.yml
+
 .env
+.env.local
 .env.*
 !.env.example
 
+npm-debug.log
+.DS_Store
+
+mongodb_data/
 node_modules/

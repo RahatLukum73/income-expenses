@@ -2,12 +2,10 @@
 const Transaction = require('../models/Transaction');
 const Account = require('../models/Account');
 
-// Основная сводка за период с соотношением доходов/расходов
 const getSummary = async (req, res) => {
 	try {
 		const { startDate, endDate } = req.query;
 
-		// Устанавливаем период по умолчанию (текущий месяц)
 		const start = startDate
 			? new Date(startDate)
 			: new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -15,9 +13,8 @@ const getSummary = async (req, res) => {
 			? new Date(endDate)
 			: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
 
-		end.setHours(23, 59, 59, 999); // Конец дня
+		end.setHours(23, 59, 59, 999);
 
-		// Получаем статистику по доходам и расходам
 		const incomeExpenseStats = await Transaction.aggregate([
 			{
 				$match: {
@@ -34,7 +31,6 @@ const getSummary = async (req, res) => {
 			},
 		]);
 
-		// Получаем баланс по счетам
 		const accountsBalance = await Account.aggregate([
 			{
 				$match: { userId: req.user._id },
@@ -47,7 +43,6 @@ const getSummary = async (req, res) => {
 			},
 		]);
 
-		// Преобразуем статистику доходов/расходов
 		let totalIncome = 0;
 		let totalExpense = 0;
 		let incomeCount = 0;
@@ -66,7 +61,6 @@ const getSummary = async (req, res) => {
 		const netIncome = totalIncome - totalExpense;
 		const totalBalance = accountsBalance[0]?.totalBalance || 0;
 
-		// Рассчитываем соотношение для горизонтальной полосы
 		const total = totalIncome + totalExpense;
 		const incomePercentage = total > 0 ? (totalIncome / total) * 100 : 0;
 		const expensePercentage = total > 0 ? (totalExpense / total) * 100 : 0;
@@ -101,7 +95,6 @@ const getSummary = async (req, res) => {
 	}
 };
 
-// Статистика по дням
 const getDailySummary = async (req, res) => {
 	try {
 		const { startDate, endDate } = req.query;
@@ -139,7 +132,6 @@ const getDailySummary = async (req, res) => {
 			},
 		]);
 
-		// Преобразуем данные для удобства использования на фронтенде
 		const dailyData = {};
 		dailyStats.forEach(stat => {
 			const date = stat._id.date;
@@ -171,7 +163,6 @@ const getDailySummary = async (req, res) => {
 	}
 };
 
-// Круговая диаграмма по категориям расходов
 const getExpenseCategoriesPie = async (req, res) => {
 	try {
 		const { startDate, endDate } = req.query;
@@ -220,10 +211,8 @@ const getExpenseCategoriesPie = async (req, res) => {
 			},
 		]);
 
-		// Вычисляем общую сумму расходов для процентов
 		const totalExpenses = categoryStats.reduce((sum, stat) => sum + stat.total, 0);
 
-		// Формируем данные для круговой диаграммы
 		const pieData = categoryStats.map(stat => ({
 			categoryId: stat._id.categoryId,
 			name: stat._id.categoryName,
@@ -248,7 +237,6 @@ const getExpenseCategoriesPie = async (req, res) => {
 	}
 };
 
-// Круговая диаграмма по счетам для доходов
 const getIncomeAccountsPie = async (req, res) => {
 	try {
 		const { startDate, endDate } = req.query;
@@ -297,10 +285,8 @@ const getIncomeAccountsPie = async (req, res) => {
 			},
 		]);
 
-		// Вычисляем общую сумму доходов для процентов
 		const totalIncome = accountStats.reduce((sum, stat) => sum + stat.total, 0);
 
-		// Формируем данные для круговой диаграммы
 		const pieData = accountStats.map(stat => ({
 			accountId: stat._id.accountId,
 			name: stat._id.accountName,
@@ -325,7 +311,6 @@ const getIncomeAccountsPie = async (req, res) => {
 	}
 };
 
-// График доходов/расходов за период (упрощенный)
 const getIncomeExpenseTrend = async (req, res) => {
 	try {
 		const { period = 'month', year = new Date().getFullYear() } = req.query;
@@ -334,13 +319,13 @@ const getIncomeExpenseTrend = async (req, res) => {
 
 		switch (period) {
 			case 'year':
-				groupFormat = '%Y-%m'; // Группировка по месяцам
+				groupFormat = '%Y-%m';
 				startDate = new Date(year, 0, 1);
 				endDate = new Date(year, 11, 31, 23, 59, 59, 999);
 				break;
 			case 'month':
 			default:
-				groupFormat = '%Y-%m-%d'; // Группировка по дням
+				groupFormat = '%Y-%m-%d';
 				const currentDate = new Date();
 				startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
 				endDate = new Date(
@@ -381,7 +366,6 @@ const getIncomeExpenseTrend = async (req, res) => {
 			},
 		]);
 
-		// Преобразуем данные для графика
 		const result = {};
 		trendData.forEach(item => {
 			const period = item._id.period;

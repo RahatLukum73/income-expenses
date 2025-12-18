@@ -10,7 +10,7 @@ const accountRoutes = require('./routes/accounts');
 const categoryRoutes = require('./routes/categories');
 const transactionRoutes = require('./routes/transactions');
 const summaryRoutes = require('./routes/summary');
-const chalk = require('chalk').default;
+const chalk = require('chalk');
 
 const port = process.env.PORT;
 const app = express();

@@ -22,7 +22,6 @@ async function register(email, password, name, currency = 'RUB') {
 
 	return { user, token };
 }
-//login
 
 async function login(email, password) {
 	if (!email || !password) {
@@ -44,7 +43,6 @@ async function login(email, password) {
 
 	return { user, token };
 }
-//logout
 
 async function logout(req) {
 	return Promise.resolve();

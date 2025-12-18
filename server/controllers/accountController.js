@@ -10,7 +10,6 @@ const getAllAccounts = async (req, res) => {
 	}
 };
 
-// Получить счет по ID
 const getAccountById = async (req, res) => {
 	try {
 		const account = await Account.findOne({
@@ -28,7 +27,6 @@ const getAccountById = async (req, res) => {
 	}
 };
 
-// Создать новый счет
 const createAccount = async (req, res) => {
 	try {
 		const { name, currency, color, icon, balance } = req.body;
@@ -49,7 +47,6 @@ const createAccount = async (req, res) => {
 	}
 };
 
-// Обновить счет
 const updateAccount = async (req, res) => {
 	try {
 		const { name, color, icon, balance } = req.body;
@@ -70,12 +67,10 @@ const updateAccount = async (req, res) => {
 	}
 };
 
-// Удалить счет
 const deleteAccount = async (req, res) => {
 	try {
 		const Transaction = require('../models/Transaction');
 
-		// Проверяем количество транзакций
 		const transactionCount = await Transaction.countDocuments({
 			accountId: req.params.id,
 			userId: req.user._id,

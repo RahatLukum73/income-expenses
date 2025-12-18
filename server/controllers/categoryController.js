@@ -1,6 +1,5 @@
 const Category = require('../models/Category');
 
-// Получить все категории (системные)
 const getAllCategories = async (req, res) => {
 	try {
 		const categories = await Category.find();
@@ -10,7 +9,6 @@ const getAllCategories = async (req, res) => {
 	}
 };
 
-// Получить категории по типу (income/expense)
 const getCategoriesByType = async (req, res) => {
 	try {
 		const { type } = req.params;
@@ -28,7 +26,6 @@ const getCategoriesByType = async (req, res) => {
 	}
 };
 
-// Получить категорию по ID
 const getCategoryById = async (req, res) => {
 	try {
 		const category = await Category.findById(req.params.id);
@@ -43,10 +40,8 @@ const getCategoryById = async (req, res) => {
 	}
 };
 
-// Получить системные категории по умолчанию
 const getDefaultCategories = async (req, res) => {
 	try {
-		// Если в базе нет категорий - инициализируем их
 		const categoriesCount = await Category.countDocuments();
 		if (categoriesCount === 0) {
 			await Category.insertMany(Category.defaultCategories);

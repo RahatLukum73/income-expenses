@@ -33,7 +33,6 @@ const userSchema = new mongoose.Schema(
 	},
 );
 
-// Виртуальное поле для пароля (не сохраняется в БД)
 userSchema
 	.virtual('password')
 	.set(function (password) {
@@ -44,12 +43,10 @@ userSchema
 		return this._password;
 	});
 
-// Метод для проверки пароля
 userSchema.methods.checkPassword = function (password) {
 	return bcrypt.compareSync(password, this.passwordHash);
 };
 
-// Убираем passwordHash из JSON ответа
 userSchema.methods.toJSON = function () {
 	const user = this.toObject();
 	delete user.passwordHash;
