@@ -9,8 +9,8 @@ RUN npm i
 RUN npm run build
 
 WORKDIR /usr/src/app/server
+COPY ./server/.env .
 RUN npm i
-
 
 EXPOSE 3001
 
