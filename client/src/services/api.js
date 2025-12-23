@@ -1,6 +1,6 @@
 import { getToken, setToken, removeToken } from '../utils/token';
 
-const BASE_URL = import.meta.env.MODE === 'development' ? '/api' : 'http://localhost:3001/api';
+const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 export const apiRequest = async (endpoint, options = {}) => {
 	const url = `${BASE_URL}${endpoint}`;
