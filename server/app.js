@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
-app.get('*', (req, res, next) => {
+app.get(/^\/(?!api).*/, (req, res, next) => {
 	if (req.path.startsWith('/api')) {
 		return next();
 	}
