@@ -5,12 +5,11 @@ WORKDIR /usr/src/app
 COPY . .
 
 WORKDIR /usr/src/app/client
-RUN npm i
-RUN npm run build
+RUN npm i && npm run build
 
 WORKDIR /usr/src/app/server
-COPY ./server/.env .
 RUN npm i
+
 
 EXPOSE 3001
 

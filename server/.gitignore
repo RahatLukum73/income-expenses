@@ -12,3 +12,4 @@ npm-debug.log
 
 mongodb_data/
 node_modules/
+node_modules

@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 const routes = require('./routes');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -18,6 +19,16 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// ============================================
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  }
+});
+// =============================================
 
 app.use('/api', routes);
 
