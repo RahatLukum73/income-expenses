@@ -22,14 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
-app.get(/^\/(?!api).*/, (req, res, next) => {
-	if (req.path.startsWith('/api')) {
-		return next();
-	}
-	if (req.path.includes('.')) {
-		return next();
-	}
-	res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
+
+app.get(/^\/(?!api).+/, (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 app.use('/api', routes);
