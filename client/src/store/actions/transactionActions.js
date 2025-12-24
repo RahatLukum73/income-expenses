@@ -19,6 +19,7 @@ import {
 	CLEAR_TRANSACTIONS_ERROR,
 	SET_TRANSACTIONS_FILTERS,
 } from '../actionTypes';
+import { fetchSummary } from './summaryActions';
 import { get, post, put, del } from '../../services/api';
 import { normalizeTransaction, normalizeTransactions } from '../../utils/normalizers';
 
@@ -108,6 +109,7 @@ export const createTransaction = transactionData => {
 				type: CREATE_TRANSACTION_SUCCESS,
 				payload: normalizedTransaction,
 			});
+			await dispatch(fetchSummary());
 			return normalizedTransaction;
 		} catch (error) {
 			dispatch({
@@ -132,6 +134,7 @@ export const updateTransaction = (id, updateData) => {
 				type: UPDATE_TRANSACTION_SUCCESS,
 				payload: normalizedTransaction,
 			});
+			await dispatch(fetchSummary());
 
 			return normalizedTransaction;
 		} catch (error) {
