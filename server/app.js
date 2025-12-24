@@ -43,7 +43,8 @@ app.use('/api/summary', summaryRoutes);
 
 mongoose
 	.connect(process.env.MONGODB_URI)
-	.then(() => {
+	.then(async () => {
+		await require('./db/init')();
 		app.listen(port, () => {
 			console.log(chalk.green(`Server started on port ${port}...`));
 		});
